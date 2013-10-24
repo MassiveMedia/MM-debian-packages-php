@@ -1,0 +1,20 @@
+Source: php-sphinx
+Section: web
+Priority: optional
+Maintainer: Bart Verwilst <bart@verwilst.be>
+Build-Depends: debhelper (>= 7), po-debconf, xsltproc , php54-dev, libsphinxclient-dev  
+Standards-Version: 3.8.1
+
+Package: php54-sphinx
+Conflicts: php5-sphinx
+Replaces: php5-sphinx
+Provides: php5-sphinx
+Architecture: any
+Depends: ${shlibs:Depends}, ${php:Depends}, ${misc:Depends}
+Description: sphinx module for PHP 5
+ Client extension for Sphinx - opensource SQL full-text search engine
+ .
+ This extension provides bindings for libsphinxclient, client library
+ for Sphinx.
+
+

@@ -1,0 +1,50 @@
+#! /bin/sh /usr/share/dpatch/dpatch-run
+## produce_anonymous.dpatch by  <poison@buildbox03.netnoc>
+##
+## All lines beginning with `## DP:' are a description of the patch.
+## DP: No description.
+
+@DPATCH@
+diff -urNad php-wbxml~/wbxml.c php-wbxml/wbxml.c
+--- php-wbxml~/wbxml.c	2013-05-29 15:30:15.000000000 +0000
++++ php-wbxml/wbxml.c	2013-05-29 15:32:11.367873463 +0000
+@@ -148,6 +148,7 @@
+     /* Microsoft AirSync */
+ #if defined( WBXML_SUPPORT_AIRSYNC )
+ 	REGISTER_LONG_CONSTANT("WBXML_LANG_AIRSYNC",		WBXML_LANG_AIRSYNC,			CONST_CS | CONST_PERSISTENT);
++	REGISTER_LONG_CONSTANT("WBXML_LANG_ACTIVESYNC",		WBXML_LANG_ACTIVESYNC,			CONST_CS | CONST_PERSISTENT);
+ #endif /* WBXML_SUPPORT_AIRSYNC */
+ 
+ 	REGISTER_LONG_CONSTANT("WBXML_GEN_XML_COMPACT",		WBXML_GEN_XML_COMPACT,		CONST_CS | CONST_PERSISTENT);
+@@ -178,27 +179,28 @@
+ }
+ /* }}} */
+ 
+-/* {{{ proto string wbxml_encode(string xml [, int wbxml_version [, bool use_strtbl [, bool keep_ignorable_ws ] ] ])
++/* {{{ proto string wbxml_encode(string xml [, int wbxml_version [, bool use_strtbl [, bool keep_ignorable_ws [, bool produce_anonymous ] ] ] ])
+    Encode an XML document into WBXML */
+ PHP_FUNCTION(wbxml_encode)
+ {
+ 	char *xml;
+ 	int xml_len;
+ 	long wbxml_version = WBXML_VERSION_12;
+-	zend_bool use_strtbl = 1, keep_ignorable_ws = 0;
++	zend_bool use_strtbl = 1, keep_ignorable_ws = 0, produce_anonymous = 0;
+ 
+ 	WB_UTINY *wbxml = NULL;
+ 	WB_LONG wbxml_len = 0;
+ 	WBXMLConvXML2WBXMLParams params;
+ 	WBXMLError result = WBXML_OK;
+ 
+-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s|lbb", &xml, &xml_len, &wbxml_version, &use_strtbl, &keep_ignorable_ws) == FAILURE) {
++	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s|lbbb", &xml, &xml_len, &wbxml_version, &use_strtbl, &keep_ignorable_ws, &produce_anonymous) == FAILURE) {
+ 		return;
+ 	}
+ 
+ 	params.wbxml_version = wbxml_version;
+ 	params.keep_ignorable_ws = keep_ignorable_ws;
+ 	params.use_strtbl = use_strtbl;
++	params.produce_anonymous = produce_anonymous;
+ 
+ 	if ((result = wbxml_conv_xml2wbxml(xml, &wbxml, &wbxml_len, &params)) == WBXML_OK) {
+ 		RETVAL_STRINGL(wbxml, wbxml_len, 1);

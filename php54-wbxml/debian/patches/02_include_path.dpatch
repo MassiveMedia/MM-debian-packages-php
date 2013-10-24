@@ -1,0 +1,57 @@
+#! /bin/sh /usr/share/dpatch/dpatch-run
+## 02_include_path.dpatch by <nicolas@massivemedia.eu>
+##
+## All lines beginning with `## DP:' are a description of the patch.
+## DP: Did some proper detecting for the libwbxml include paths, so it could
+## DP: compile with our libwbxml package (libwbxml2-0_0.11.2-0mm1). For more
+## DP: information see our launchpad ppa
+## DP: https://launchpad.net/~493pocbrcycmdw7yksonho9o2qzz-o18bz-d18ecat4t1b76tkfi3vttrkfngli/+archive/ppa/
+
+@DPATCH@
+diff -urNad php-wbxml~/config.m4 php-wbxml/config.m4
+--- php-wbxml~/config.m4	2009-02-22 11:30:57.000000000 +0000
++++ php-wbxml/config.m4	2013-05-30 09:54:02.491075615 +0000
+@@ -22,8 +22,8 @@
+ if test "$PHP_WBXML" != "no"; then
+   AC_DEFINE(HAVE_WBXML, 1, [ ])
+ 
+-  AC_MSG_CHECKING([for the location of libwbxml2])
+-  for i in $PHP_WBXML /usr/local /usr; do
++  AC_MSG_CHECKING([for the location of libwbxml2 library])
++  for i in $PHP_WBXML /usr/local /usr /opt/local; do
+     for j in $PHP_LIBDIR lib64 lib; do
+       if test -f $i/$j/libwbxml2.$SHLIB_SUFFIX_NAME; then
+         WBXML_DIR=$i
+@@ -38,12 +38,31 @@
+     AC_MSG_RESULT([$WBXML_DIR])
+   fi
+ 
++  AC_MSG_CHECKING([for the location of libwbxml2 includes])
++  for i in $PHP_WBXML /usr/local /usr /opt/local $WBXML_DIR; do
++    for j in libwbxml libwbxml-1.0 libwbxml-2.0; do
++      if test -r $i/include/$j/wbxml/wbxml.h; then
++        WBXML_INC_DIR=$i/include/$j/wbxml
++        break
++      elif test -r $i/include/wbxml.h; then
++        WBXML_INC_DIR=$i/include
++        break
++      fi
++    done
++  done
++
++  if test -z "$WBXML_INC_DIR"; then
++    AC_MSG_ERROR([couldn't find the wbxml.h file in the include paths, make sure you have the wbxml development files installed])
++  else
++    AC_MSG_RESULT([$WBXML_INC_DIR])
++  fi
++
+   PHP_CHECK_LIBRARY(wbxml2, wbxml_conv_xml2wbxml_withlen,,[
+     AC_MSG_ERROR([failed to find and link against libwbxml2 (http://libwbxml.aymerick.com/)])
+   ],-L$WBXML_LIBDIR)
+ 
+   PHP_ADD_LIBRARY_WITH_PATH(wbxml2, $WBXML_LIBDIR, WBXML_SHARED_LIBADD)
+-  PHP_ADD_INCLUDE($WBXML_DIR/include)
++  PHP_ADD_INCLUDE($WBXML_INC_DIR)
+ 
+   for i in $PHP_LIBEXPAT_DIR /usr/local /usr; do
+     for j in $PHP_LIBDIR lib64 lib; do

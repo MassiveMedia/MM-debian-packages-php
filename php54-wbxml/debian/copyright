@@ -1,0 +1,15 @@
+This work was packaged for Debian by:
+
+    Massive Media <admin@massivemedia.eu> on Wed, 29 May 2013 17:08:24 +0200
+
+It was downloaded from http://pecl.php.net/package/WBXML
+
+Created and maintained by:
+  Mikael Johansson              mikael AT synd DOT info
+
+The Debian packaging is:
+
+    Copyright (C) 2013 Massive Media <admin@massivemedia.eu>
+
+and is licensed under the Apache 2.0,
+see `http://www.apache.org/licenses/LICENSE-2.0.html'.

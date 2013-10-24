@@ -1,0 +1,19 @@
+Source: php-igbinary
+Section: web
+Priority: optional
+Maintainer: Massive Media <admin@massivemedia.eu>
+Build-Depends: debhelper (>= 7), php54-dev
+Standards-Version: 3.8.3
+Homepage: http://opensource.dynamoid.com/
+
+Package: php54-igbinary
+Conflicts: php5-igbinary
+Provides: php5-igbinary
+Replaces: php5-igbinary
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: PHP binary serializer
+ Igbinary is a drop in replacement for the standard PHP serializer. Instead
+ of time and space consuming textual representation, igbinary stores PHP data
+ structures in a compact binary form. Savings are significant when using
+ memcached or similar memory based storages for serialized data.

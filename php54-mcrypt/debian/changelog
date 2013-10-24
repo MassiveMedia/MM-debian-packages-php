@@ -1,0 +1,63 @@
+php-mcrypt (5.3.2-0ubuntu1) lucid; urgency=low
+
+  * New upstream realse against PHP 5.3.2.
+
+ -- Chuck Short <zulcss@ubuntu.com>  Tue, 16 Mar 2010 10:25:52 -0400
+
+php-mcrypt (5.3.1-0ubuntu1) lucid; urgency=low
+
+  * New upstream release against PHP 5.3.1 
+
+ -- Chuck Short <zulcss@ubuntu.com>  Tue, 02 Mar 2010 14:40:36 -0500
+
+php-mcrypt (5.2.6-0ubuntu2) intrepid; urgency=low
+
+  * debian/rules: put some configuration variables from new libtool in
+    build-php5/config.m4 to fix a FTBFS against libtool 2.2.
+
+ -- Luca Falavigna <dktrkranz@ubuntu.com>  Sat, 13 Sep 2008 20:18:31 +0200
+
+php-mcrypt (5.2.6-0ubuntu1) intrepid; urgency=low
+
+  * New upstream release against php 5.2.6 (LP: #237008).
+  * debian/compat:
+    - Bump compatibility to 5.
+  * debian/control:
+    - Build depend on debhelper (>= 5) and php5-dev (>= 5.2.6).
+    - Remove Uploaders field.
+    - Bump Standards-Version to 3.7.3.
+  * debian/rules:
+    - Install mcrypt.ini into /etc/php5/conf.d directory.
+  * debian/copyright:
+    - Update copyright details.
+  * debian/po, php5-mcrypt.{config,prerm,postinst,templates}:
+    - Remove them, no longer needed since PHP 5.1.6.
+
+ -- Luca Falavigna <dktrkranz@ubuntu.com>  Thu, 05 Jun 2008 18:14:47 +0200
+
+php-mcrypt (5.2.3-0ubuntu1) gutsy; urgency=low
+
+  * New upstream release
+  * Removed obsolete php4 files
+
+ -- Rick Clark <rick.clark@ubuntu.com>  Mon, 25 Jun 2007 15:55:48 -0400
+
+php-mcrypt (5.1.2-1ubuntu1) feisty; urgency=low
+
+  * Don't build a php4 module anymore.
+  * debian/control: Change Maintainer/XSBC-Original-Maintainer field.
+
+ -- Michael Bienia <geser@ubuntu.com>  Wed, 14 Mar 2007 14:41:07 +0100
+
+php-mcrypt (5.1.2-1build1) feisty; urgency=low
+
+  * Rebuild to depend upon phpapi-20060613
+
+ -- Vassilis Pandis <pandisv@yahoo.co.uk>  Mon, 25 Dec 2006 16:56:25 +0200
+
+php-mcrypt (5.1.2-1) unstable; urgency=low
+
+  * Initial release. (Closes: #321933)
+  * Use 3.01 version of PHP license.
+
+ -- Ondřej Surý <ondrej@debian.org>  Wed, 22 Mar 2006 15:10:44 +0100

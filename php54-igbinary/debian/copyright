@@ -1,0 +1,24 @@
+This work was packaged for Debian by:
+
+    Massive Media <admin@massivemedia.eu> on Mon, 21 Nov 2011 09:55:00 +0000
+
+It was downloaded from http://opensource.dynamoid.com/
+
+Upstream Author(s):
+
+    Sulake Dynamoid Oy
+
+Copyright:
+
+    2008 Sulake Dynamoid Oy
+
+License:
+
+    PHP
+
+The Debian packaging is:
+
+    Copyright (C) 2011 Massive Media <admin@massivemedia.eu>
+
+and is licensed under the GPL version 3, 
+see `/usr/share/common-licenses/GPL-3'.

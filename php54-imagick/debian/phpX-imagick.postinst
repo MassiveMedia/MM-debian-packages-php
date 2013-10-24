@@ -1,0 +1,9 @@
+#! /bin/sh -e
+
+if test "$1" = "configure"; then
+    ucf /usr/share/phpX-imagick/imagick.ini-dist /etc/phpX/conf.d/imagick.ini
+fi
+
+#DEBHELPER#
+
+exit 0

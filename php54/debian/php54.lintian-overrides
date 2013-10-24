@@ -1,0 +1,3 @@
+php54-common: non-standard-dir-perm var/lib/php54/ 1733 != 0755
+php54-common: package-contains-empty-directory usr/lib/php54/libexec/
+php54-common: missing-dependency-on-phpapi

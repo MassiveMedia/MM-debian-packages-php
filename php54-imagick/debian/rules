@@ -1,0 +1,45 @@
+#!/usr/bin/make -f
+
+DEB_TAR_SRCDIR := $(shell basename $(wildcard *.tgz) .tgz)
+
+include /usr/share/cdbs/1/rules/tarball.mk
+include /usr/share/cdbs/1/rules/debhelper.mk
+
+PHP_EX5=$(shell /usr/bin/php-config5 --extension-dir)
+
+DEB_INSTALL_EXAMPLES_php54-imagick = $(DEB_SRCDIR)/examples/*
+DEB_INSTALL_DOCS_php54-imagick = $(DEB_SRCDIR)/CREDITS
+
+#
+# local hacks
+#
+
+patch: apply-patches
+
+clean::
+	rm -f php[5]-imagick.postrm php[5]-imagick.postinst
+
+configure_for_php%:
+	cd $(DEB_SRCDIR) && phpize --clean && phpize && \
+	    ./configure --with-imagick --with-php-config=/usr/bin/php-config$* --with-regex=system \
+	    --disable-rpath --disable-static --with-imagick=shared,/usr
+	sed -e 's/phpX/php$*/g' < debian/phpX-imagick.postinst > debian/php54-imagick.postinst
+	sed -e 's/phpX/php$*/g' < debian/phpX-imagick.postrm   > debian/php54-imagick.postrm
+
+#
+# cdbs things
+#
+
+define install_rule
+	$(MAKE) -C $(DEB_SRCDIR)
+	mkdir -p debian/php54-imagick$(PHP_EX$1)
+	install -m 644 -o root -g root $(DEB_SRCDIR)/modules/imagick.so debian/php54-imagick$(PHP_EX$1)/imagick.so
+	mkdir -p debian/php54-imagick/usr/share/lintian/overrides
+	echo "php54-imagick: no-shlibs-control-file $(PHP_EX$1)/imagick.so" > debian/php54-imagick/usr/share/lintian/overrides/php$1-imagick
+	echo "php$1:Depends=phpapi-`php-config$1 --phpapi`, php$1-common" >> debian/php54-imagick.substvars
+	mkdir -p debian/php54-imagick/usr/share/php$1-imagick/
+	cp debian/imagick.ini  debian/php54-imagick/usr/share/php$1-imagick/imagick.ini-dist
+endef
+
+install/php54-imagick:: configure_for_php5
+	$(call install_rule,5)

@@ -1,0 +1,20 @@
+This package was debianized by Bart Verwilst <bart@verwilst.be> using dh-make-pecl
+on Thu, 24 Mar 2011 13:07:10 +0100.
+
+It was downloaded from http://pecl.php.net/package/sphinx
+
+Upstream Author(s):
+
+    Antony Dovgal, Alexey Romanenko
+
+Copyright:
+
+    Copyright (C) 2010 Antony Dovgal, Alexey Romanenko
+
+License:
+
+    PHP
+
+The Debian packaging is copyright 2009, Bart Verwilst <bart@verwilst.be> and
+is licensed under the GPL, see `/usr/share/common-licenses/GPL'.
+

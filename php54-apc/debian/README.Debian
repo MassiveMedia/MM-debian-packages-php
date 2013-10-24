@@ -1,0 +1,15 @@
+
+                             NOTES FOR DEBIAN USERS
+                             ======================
+
+
+1. Viewing statistics and tunning your cache
+
+APC come with a script called apc.php. This script provides detailed
+information about your cache. In Debian this script is in
+/usr/share/doc/php-apc. Copy or symlink the file to your docroot and access it
+with you browser. If you install the php5-gd package you will also be present
+with graphics. In order to understand the information and use it to tune you
+cache refer to the APC documentation at: http://php.net/apc
+
+ -- Pietro Ferrari <pietro@riseup.net>  Wed, 17 Dec 2008 11:23:39 -0500

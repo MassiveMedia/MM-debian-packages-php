@@ -1,0 +1,37 @@
+php-wbxml (1.0.3-0mm6) lucid; urgency=low
+
+  * bump the version number
+
+ -- Massive Media <admin@massivemedia.eu>  Wed, 02 Oct 2013 18:15:38 +0000
+
+php-wbxml (1.0.3-0mm5) lucid; urgency=low
+
+  * Remove debian/php5-wbxml.dirs; we don't need usr/lib/php5 for our
+    own php5.4 packages, and the "make install" target creates any
+    needed directories, anyway.
+
+ -- Wouter Verhelst <wouter@ubuntu>  Tue, 17 Sep 2013 21:09:19 +0200
+
+php-wbxml (1.0.3-0mm4) lucid; urgency=low
+
+  * Really fixed the patching now
+
+ -- Massive Media <admin@massivemedia.eu>  Thu, 30 May 2013 12:19:53 +0000
+
+php-wbxml (1.0.3-0mm3) lucid; urgency=low
+
+  * Needed to apply the patches before the configure phase
+
+ -- Massive Media <admin@massivemedia.eu>  Thu, 30 May 2013 07:35:47 +0000
+
+php-wbxml (1.0.3-0mm2) lucid; urgency=low
+
+  * Fixed include path for libwbxml
+
+ -- Massive Media <admin@massivemedia.eu>  Wed, 29 May 2013 19:17:43 +0000
+
+php-wbxml (1.0.3-0mm1) lucid; urgency=low
+
+  * Initial release from http://pecl.php.net/package/WBXML
+
+ -- Massive Media <admin@massivemedia.eu>  Wed, 29 May 2013 17:08:24 +0200

@@ -1,0 +1,23 @@
+Source: php-mcrypt
+Section: web
+Priority: optional
+Maintainer: Ubuntu MOTU Developers <ubuntu-motu@lists.ubuntu.com>
+XSBC-Original-Maintainer: Debian PHP Maintainers <pkg-php-maint@lists.alioth.debian.org>
+Uploaders: Adam Conrad <adconrad@0c3.net>, Ondřej Surý <ondrej@debian.org>, Christian Bayle <bayle@debian.org>
+Build-Depends: debhelper (>= 5), libmcrypt-dev, php54-dev
+Standards-Version: 3.7.3
+
+Package: php54-mcrypt
+Conflicts: php5-mcrypt
+Replaces: php5-mcrypt
+Provides: php5-mcrypt
+Architecture: any
+Depends: ${shlibs:Depends}, ${php:Depends}, ${misc:Depends}
+Description: MCrypt module for php5
+ This package provides a module for MCrypt functions in PHP scripts.
+ .
+ PHP5 is an HTML-embedded scripting language. Much of its syntax is borrowed
+ from C, Java and Perl with a couple of unique PHP-specific features thrown
+ in. The goal of the language is to allow web developers to write
+ dynamically generated pages quickly.
+

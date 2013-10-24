@@ -1,0 +1,25 @@
+This work was packaged for Debian by:
+
+    Massive Media <admin@massivemedia.eu> on Mon, 21 Nov 2011 00:41:18 +0000
+
+It was downloaded from https://github.com/php-memcached-dev/php-memcached
+
+Upstream Author(s):
+
+    Andrei Zmievski
+    Oleg Grenrus (igbinary support)
+
+Copyright:
+
+    2011 Andrei Zmievski, Oleg Grenrus
+
+License:
+
+    PHP
+
+The Debian packaging is:
+
+    Copyright (C) 2011 Massive Media <admin@massivemedia.eu>
+
+and is licensed under the GPL version 3, 
+see `/usr/share/common-licenses/GPL-3'.

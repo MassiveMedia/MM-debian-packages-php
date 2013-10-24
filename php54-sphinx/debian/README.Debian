@@ -1,0 +1,7 @@
+php-sphinx for Debian
+--------------------------
+
+This extension has been created with dh-make-pecl which is part
+of dh-make-php.
+
+ -- Bart Verwilst <bart@verwilst.be>, Thu, 24 Mar 2011 13:07:10 +0100

@@ -1,0 +1,2 @@
+php54-dev: script-not-executable ./usr/lib/php54/build/run-tests.php
+php54-dev: script-not-executable usr/lib/php54/build/run-tests.php

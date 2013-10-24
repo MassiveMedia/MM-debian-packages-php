@@ -1,0 +1,11 @@
+php-zmq (1.0.3-0mm2) lucid; urgency=low
+
+  * Added pkg-config as builddeb
+
+ -- Massive Media <admin@massivemedia.eu>  Mon, 20 Aug 2012 09:01:16 +0000
+
+php-zmq (1.0.3-0mm1) lucid; urgency=high
+
+  * Initial release from https://github.com/mkoppanen/php-zmq/zipball/1.0.3
+
+ -- Massive Media <admin@massivemedia.eu>  Mon, 20 Aug 2012 09:12:11 +0000

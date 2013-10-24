@@ -1,0 +1,47 @@
+php54 (5.4.20-0mm3) lucid; urgency=low
+
+  * added pcntl to cli
+
+ -- Massive Media <admin@massivemedia.eu>  Thu, 03 Oct 2013 12:34:01 +0000
+
+php54 (5.4.20-0mm2) lucid; urgency=low
+
+  * stupid api
+
+ -- Massive Media <admin@massivemedia.eu>  Thu, 03 Oct 2013 10:27:38 +0000
+
+php54 (5.4.20-0mm1) lucid; urgency=low
+
+  * corrected version numbers
+
+ -- Massive Media <admin@massivemedia.eu>  Thu, 03 Oct 2013 08:42:06 +0000
+
+php54 (5.4.20-0ubuntu1) lucid; urgency=low
+
+  * New upstream release
+
+ -- Massive Media <hannes@buildbox04.netnoc>  Thu, 03 Oct 2013 07:15:56 +0000
+
+php54 (5.4.16-0mm4) lucid; urgency=low
+
+  * bump the version
+
+ -- Massive Media <hannes@buildbox04.netnoc>  Thu, 19 Sep 2013 07:22:32 +0000
+
+php54 (5.4.16-0mm1) lucid; urgency=low
+
+  * now including source in debuild stuff
+
+ -- Massive Media <admin@massivemedia.eu>  Mon, 29 Jul 2013 08:25:33 +0000
+
+php54 (5.4.16-0mm0) lucid; urgency=low
+
+  * first upload...
+
+ -- Massive Media <admin@massivemedia.eu>  Mon, 29 Jul 2013 07:50:26 +0000
+
+php54 (5.4.16-1) unstable; urgency=low
+
+  * Initial release (Closes: #nnnn)  <nnnn is the bug number of your ITP>
+
+ -- Massive Media <admin@massivemedia.eu>  Wed, 19 Jun 2013 14:38:41 +0000

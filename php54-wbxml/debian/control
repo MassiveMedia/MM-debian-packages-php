@@ -1,0 +1,18 @@
+Source: php-wbxml
+Section: web
+Priority: optional
+Maintainer: Massive Media <admin@massivemedia.eu>
+Build-Depends: debhelper (>= 7), php54-dev (<= 5.4.19), libwbxml2-dev (>= 0.11.2), dpatch
+Standards-Version: 3.8.3
+Homepage: http://pecl.php.net/package/WBXML
+
+Package: php54-wbxml
+Conflicts: php5-wbxml
+Replaces: php5-wbxml
+Provides: php5-wbxml
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, libwbxml2-0 (>= 0.11.2)
+Description: WBXML to XML conversion for PHP
+ This extension provides WBXML (Wireless Binary XML) conversion capabilities
+ using the libwbxml library, which can be found at
+ http://libwbxml.aymerick.com/

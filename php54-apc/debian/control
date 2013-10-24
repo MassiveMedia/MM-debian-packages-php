@@ -1,0 +1,21 @@
+Source: php-apc
+Section: php
+Priority: optional
+Maintainer: Pietro Monteiro <pietro@riseup.net>
+Uploaders: Lior Kaplan <kaplan@debian.org>
+Build-Depends: debhelper (>= 5), php54-dev, libpcre3-dev
+Standards-Version: 3.9.3
+Homepage: http://pecl.php.net/package/APC
+
+Package: php54-apc
+Provides: php5-apc, php-apc
+Replaces: php5-apc, php-apc
+Conflicts: php5-apc, php5-xcache, php-apc
+Architecture: any
+Depends: ${shlibs:Depends}, ${php:Depends}, ${misc:Depends}
+Suggests: php5-gd
+Description: APC (Alternative PHP Cache) module for PHP 5
+ The Alternative PHP Cache, also known as APC, is a free, open, and robust
+ framework for caching and optimizing PHP intermediate code. APC is a fast
+ solution for caching PHP code locally, it is not distributed like MemcacheD,
+ but they can be used together for optimal caching.

@@ -1,0 +1,23 @@
+php-gearman (0.8.1-0mm1) lucid; urgency=low
+
+  * New upstream release
+
+ -- Massive Media <admin@massivemedia.eu>  Tue, 17 Jan 2012 11:51:31 +0000
+
+php-gearman (0.8.0-0mm3) lucid; urgency=low
+
+  * Sources rename and cleanup of the package
+
+ -- Massive Media <admin@massivemedia.eu>  Mon, 21 Nov 2011 07:55:00 +0000
+
+php5-gearman (0.8.0-0mm2) lucid; urgency=low
+
+  * Added libevent-dev to build dependencies because compliation breaks on it
+
+ -- Massive Media <admin@massivemedia.eu>  Thu, 17 Nov 2011 22:09:55 +0000
+
+php5-gearman (0.8.0-0mm1) lucid; urgency=medium
+
+  * Initial release from http://pecl.php.net/package/gearman
+
+ -- Massive Media <admin@massivemedia.eu>  Thu, 17 Nov 2011 21:11:18 +0000

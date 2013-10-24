@@ -1,0 +1,17 @@
+xhprof (0.9.2+git20130123-1mm1) lucid; urgency=low
+
+  * Backport for Massive Media
+  * Changes to make it build and work on 10.04:
+    - Change debhelper compat level to 7 rather than 8 (and update
+      build-dependency)
+    - Don't include the dpkg buildflags makefile snippet (and remove versioned
+      dpkg-dev build-dependency)
+    - Drop config file in /etc/php5/conf.d rather than .../mods-available
+
+ -- Wouter Verhelst <wouter@nixsys.be>  Thu, 12 Sep 2013 22:46:48 +0200
+
+xhprof (0.9.2+git20130123-1) unstable; urgency=low
+
+  * Initial release (closes: #698972).
+
+ -- Laszlo Boszormenyi (GCS) <gcs@debian.hu>  Sat, 26 Jan 2013 20:50:37 +0100

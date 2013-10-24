@@ -1,0 +1,17 @@
+Source: php-zmq
+Section: web
+Priority: optional
+Maintainer: Massive Media <admin@massivemedia.eu>
+Build-Depends: debhelper (>= 7), php54-dev, zeromq (>= 3.2.0), pkg-config
+Standards-Version: 3.8.3
+Homepage: https://github.com/mkoppanen/php-zmq
+
+Package: php54-zmq
+Replaces: php5-zmq
+Conflicts: php5-zmq
+Provides: php5-zmq
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, zeromq (>= 3.2.0)
+Description: PHP extension for 0MQ messaging system.
+ PHP extension for 0MQ messaging system. See
+ http://github.com/mkoppanen/php-zmq

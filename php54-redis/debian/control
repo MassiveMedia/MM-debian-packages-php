@@ -1,0 +1,15 @@
+Source: php-redis
+Section: web
+Priority: optional
+Maintainer: Massive Media <admin@massivemedia.eu>
+Build-Depends: debhelper (>= 7), po-debconf, xsltproc , php54-dev, libsphinxclient-dev  
+Standards-Version: 3.8.1
+
+Package: php54-redis
+Conflicts: php5-redis
+Replaces: php5-redis
+Provides: php5-redis
+Architecture: any
+Depends: ${shlibs:Depends}, ${php:Depends}, ${misc:Depends}
+Description: redis module for PHP 5
+ Client extension for Redis

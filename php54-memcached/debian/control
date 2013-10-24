@@ -1,0 +1,21 @@
+Source: php-memcached
+Section: web
+Priority: optional
+Maintainer: Massive Media <admin@massivemedia.eu>
+Build-Depends: debhelper (>= 7), php54-dev, libmemcached-dev (>= 1.0.10), php54-igbinary (>= 1.1.1)
+Standards-Version: 3.8.4
+Homepage: https://github.com/php-memcached-dev/php-memcached
+
+Package: php54-memcached
+Replaces: php5-memcached
+Conflicts: php5-memcached
+Provides: php5-memcached
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, libmemcached11, php54-igbinary (>= 1.1.1)
+Description: PHP5 memcached memcached extension
+ This extension uses libmemcached library to provide API for communicating
+ with memcached servers.
+ .
+ memcached is a high-performance, distributed memory object caching system,
+ generic in nature, but intended for use in speeding up dynamic web
+ applications by alleviating database load.

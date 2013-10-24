@@ -1,0 +1,624 @@
+#!/usr/bin/make -f
+# Sample debian/rules that uses debhelper. 
+# GNU copyright 1997 by Joey Hess.
+#
+# This version is for a hypothetical package that builds an
+# architecture-dependant package, as well as an architecture-independent
+# package.
+
+# Uncomment this to turn on verbose mode. 
+#export DH_VERBOSE=1
+
+# This has to be exported to make some magic below work.
+export DH_OPTIONS
+
+DEB_HOST_GNU_TYPE    ?= $(shell dpkg-architecture -qDEB_HOST_GNU_TYPE)
+DEB_BUILD_GNU_TYPE   ?= $(shell dpkg-architecture -qDEB_BUILD_GNU_TYPE)
+
+PHP5_HOST_GNU_TYPE    = $(subst gnulp,gnu,$(DEB_HOST_GNU_TYPE))
+PHP5_BUILD_GNU_TYPE   = $(subst gnulp,gnu,$(DEB_BUILD_GNU_TYPE))
+
+PHP5_HOST_GNU_TYPE    := $(shell echo $(PHP5_HOST_GNU_TYPE) | sed 's/-gnu$$//')
+PHP5_BUILD_GNU_TYPE   := $(shell echo $(PHP5_BUILD_GNU_TYPE) | sed 's/-gnu$$//')
+DEB_HOST_ARCH        ?= $(shell dpkg-architecture -qDEB_HOST_ARCH)
+
+PHP5_SOURCE_VERSION   = $(shell dpkg-parsechangelog | grep ^Version | sed "s/Version: //")
+PHP5_UPSTREAM_VERSION = $(shell echo $(PHP5_SOURCE_VERSION) | sed -e "s/-.*//" -e "s/.*://")
+PHP5_DEBIAN_REVISION  = $(shell echo $(PHP5_SOURCE_VERSION) | sed "s/.*-//")
+
+RUN_TESTS = no
+ifeq (nocheck,$(findstring nocheck,$(DEB_BUILD_OPTIONS)))
+  $(warning Disabling checks due DEB_BUILD_OPTIONS)
+  RUN_TESTS = no
+endif
+ifeq ($(DEB_HOST_ARCH),$(findstring $(DEB_HOST_ARCH),hurd-i386))
+  $(warning Disabling checks on hurd-i386)
+  RUN_TESTS = no
+endif
+
+CONFIGURE_APACHE_ARGS = --without-interbase --without-pdo-firebird
+
+ifeq (yes,$(RUN_TESTS))
+  MYSQL_PORT := $(shell for i in $$(seq 1025 3600 | sort -R); do nc -z localhost $$i || { echo $$i; exit; } ; done)
+  MYSQL_DATA_DIR ?= $(shell readlink -f mysql_db)
+  ifeq (,$(MYSQL_PORT))
+      $(error Could not find available port for mysql server)
+  endif
+  MYSQL_SOCKET = $(MYSQL_DATA_DIR)/mysql.sock
+endif
+
+ifeq (,$(findstring noopt,$(DEB_BUILD_OPTIONS)))
+  CFLAGS += -O2
+else
+  CFLAGS += -O0
+endif
+CFLAGS += -Wall -fsigned-char -fno-strict-aliasing 
+# LFS support
+ifneq (yes,$(PHP5_COMPAT))
+  CFLAGS += $(shell getconf LFS_CFLAGS)
+endif
+
+ifeq ($(DEB_HOST_GNU_TYPE), $(findstring $(DEB_HOST_GNU_TYPE), ia64-linux-gnu powerpc64-linux-gnu avr32-linux-gnu))
+  CFLAGS += -g
+else
+  CFLAGS += -gstabs
+endif
+
+# some other helpful (for readability at least) shorthand variables
+PHPIZE_BUILDDIR = debian/php54-dev/usr/lib/php/build
+
+# support new (>= 2.2) and older versions of libtool for backporting ease
+LIBTOOL_DIRS = /usr/share/libtool/config /usr/share/libtool
+LTMAIN = $(firstword $(wildcard $(foreach d,$(LIBTOOL_DIRS),$d/ltmain.sh)))
+LTMAIN_DIR = $(dir $(LTMAIN))
+
+ifeq ($(LTMAIN_DIR), /usr/share/libtool/)
+LIBTOOL_CONFLICTS:=libtool (>= 2.2)
+else ifeq ($(LTMAIN_DIR), /usr/share/libtool/config/)
+LIBTOOL_CONFLICTS:=libtool (<< 2.2)
+else
+LIBTOOL_CONFLICTS:=$(error "could not resolve path to ltmain.sh")
+endif
+
+#ifneq (,$(filter parallel=%,$(DEB_BUILD_OPTIONS)))
+#    NUMJOBS = $(patsubst parallel=%,%,$(filter parallel=%,$(DEB_BUILD_OPTIONS)))
+#    MAKEFLAGS += -j$(NUMJOBS)
+#endif
+
+COMMON_CONFIG=--build=$(DEB_BUILD_GNU_TYPE) \
+		--host=$(DEB_HOST_GNU_TYPE) \
+		--disable-debug \
+		--disable-rpath \
+		--disable-static \
+		--enable-bcmath \
+		--enable-calendar \
+		--enable-ctype \
+		--enable-exif \
+		--enable-ftp \
+		--enable-intl=shared \
+		--enable-mbstring \
+		--enable-mysqlnd \
+		--enable-pdo \
+		--enable-shmop \
+		--enable-soap \
+		--enable-sockets \
+		--enable-sysvmsg \
+		--enable-sysvsem \
+		--enable-sysvshm \
+		--enable-wddx \
+		--enable-zip \
+		--localstatedir=/var \
+		--mandir=/usr/share/man \
+		--sysconfdir=/etc \
+		--with-bz2 \
+		--with-curl \
+		--with-db4 \
+		--with-enchant=shared,/usr \
+		--with-exec-dir=/usr/lib/php5/libexec \
+		--with-freetype-dir=shared,/usr \
+		--with-gd --enable-gd-native-ttf \
+		--with-gettext \
+		--with-gmp=shared,/usr \
+		--with-iconv \
+		--with-jpeg-dir=shared,/usr \
+		--with-kerberos=/usr \
+		--with-layout=GNU \
+		--with-libxml-dir=/usr \
+		--with-mhash=yes \
+		--with-mysql=mysqlnd \
+		--with-mysqli=mysqlnd \
+		--with-openssl \
+		--with-pcre-regex=/usr \
+		--with-pdo-dblib=shared,/usr \
+		--with-pdo-mysql=mysqlnd \
+		--with-pdo-odbc=shared,unixODBC,/usr \
+		--with-pdo-pgsql=/usr/bin/pg_config \
+		--with-pdo-sqlite=/usr \
+		--with-pear=/usr/share/php \
+		--with-pic \
+		--with-png-dir=shared,/usr \
+		--with-pspell=shared,/usr \
+		--with-recode=shared,/usr \
+		--with-regex=php \
+		--with-snmp=shared,/usr \
+		--with-system-tzdata \
+		--with-t1lib=shared,/usr \
+		--with-tidy=shared,/usr \
+		--with-ttf=shared,/usr \
+		--with-unixODBC=shared,/usr \
+		--with-xmlrpc=shared \
+		--with-xpm-dir=shared,/usr/X11R6 \
+		--with-xsl=shared,/usr \
+		--with-zlib \
+		--with-zlib-dir=/usr \
+		--without-gdbm \
+		--without-mm \
+		--without-mssql --with-sqlite3 --with-pgsql \
+		--without-sybase-ct --with-sqlite \
+		--with-mysql-sock=/var/run/mysqld/mysqld.sock \
+		--with-mcrypt
+BUILTIN_EXTENSION_CHECK=$$e=get_loaded_extensions(); natcasesort($$e); \
+                        $$s="The following extensions are built in:"; \
+                        foreach($$e as $$i) { $$s .= " $$i"; } \
+                        echo("php:Extensions=" . wordwrap($$s . ".\n", 75, "\$${Newline} "));
+
+
+unprepared:
+	dh_testdir
+	sed -i -e 's/EXTRA_VERSION="-$(PHP5_DEBIAN_REVISION)"/EXTRA_VERSION=""/' configure.in
+	rm -f prepared-stamp
+
+test-results.txt: build-apache2-stamp build-cli-stamp build-cgi-stamp
+
+build: build-apache2-stamp	build-apache2filter-stamp build-cgi-stamp build-cli-stamp build-fpm-stamp build-pear-stamp
+	#test-results.txt
+
+build-apache2-stamp: configure-apache2-stamp
+	dh_testdir
+	cd apache2-build && $(MAKE)
+
+	touch build-apache2-stamp
+
+build-apache2filter-stamp: configure-apache2filter-stamp
+	dh_testdir
+	cd apache2filter-build && $(MAKE)
+
+	touch build-apache2filter-stamp
+
+build-cli-stamp: configure-cli-stamp
+	dh_testdir
+	cd cli-build && $(MAKE)
+
+	touch build-cli-stamp
+
+build-fpm-stamp: configure-fpm-stamp
+	dh_testdir
+	cd fpm-build && $(MAKE)
+
+	touch build-fpm-stamp
+
+
+build-cgi-stamp: configure-cgi-stamp
+	dh_testdir
+	cd cgi-build && $(MAKE) && mv sapi/cgi/php-cgi sapi/cgi/cgi-bin.php54
+
+	# Dirty hack to not rebuild everything twice
+	cd cgi-build/main && \
+		sed -i -e 's/FORCE_CGI_REDIRECT 1/FORCE_CGI_REDIRECT 0/' \
+		       -e 's/DISCARD_PATH 0/DISCARD_PATH 1/' php_config.h && \
+		sed -i -e 's/--enable-force-cgi-redirect/--enable-discard-path/' build-defs.h && \
+		touch ../../ext/standard/info.c && \
+		touch ../../sapi/cgi/cgi_main.c
+
+	cd cgi-build && $(MAKE) && mv sapi/cgi/php-cgi sapi/cgi/usr.bin.php54-cgi
+
+	touch build-cgi-stamp
+
+build-pear-stamp: build-cgi-stamp
+	dh_testdir
+	-mkdir pear-build
+	-mkdir pear-build-download
+	cd cgi-build && PHP_PEAR_DOWNLOAD_DIR=$(CURDIR)/pear-build-download $(MAKE) install-pear PHP_PEAR_PHP_BIN=/usr/bin/php PHP_PEAR_INSTALL_DIR=/usr/share/php PHP_PEAR_SYSCONF_DIR=/etc/pear PHP_PEAR_SIG_BIN=/usr/bin/gpg INSTALL_ROOT=$(CURDIR)/pear-build
+	sed -i -e 's/-d output_buffering=1 -d open_basedir="" -d safe_mode=0/-d output_buffering=1 -d open_basedir="" -d safe_mode=0 -d memory_limit="-1"/' \
+	       $(CURDIR)/pear-build/usr/bin/pear && \
+	sed -i -e 's/-d output_buffering=1 -d safe_mode=0/-d output_buffering=1 -d open_basedir="" -d safe_mode=0 -d memory_limit="-1"/' \
+	       $(CURDIR)/pear-build/usr/bin/pecl && \
+	sed -i -e 's/-d memory_limit="-1"//' \
+	       -e 's/-d output_buffering=1 -d open_basedir="" -d safe_mode=0/-d output_buffering=1 -d open_basedir="" -d safe_mode=0 -d memory_limit="-1"/' \
+	       $(CURDIR)/pear-build/usr/bin/peardev
+	sed -i -re "s#('PEAR_CONFIG_SYSCONFDIR', PHP_SYSCONFDIR)#\1 . '/pear'#" $(CURDIR)/pear-build/usr/share/php/PEAR/Config.php
+	#patch -s -d $(CURDIR)/pear-build/usr/share/php/ -p1 -i $(CURDIR)/debian/patches/PEAR-Builder-print-info-about-php5-dev.patch
+	touch build-pear-stamp
+
+configure: configure-apache2-stamp configure-apache2filter-stamp configure-cli-stamp configure-fpm-stamp configure-cgi-stamp
+
+configure-apache2-stamp: 
+	#prepared-stamp
+	dh_testdir
+	if [ -d apache2-build ]; then rm -rf apache2-build; fi
+	-mkdir apache2-build
+	cd apache2-build && \
+        CFLAGS="$(CFLAGS)" PROG_SENDMAIL="$(PROG_SENDMAIL)" ../configure \
+		--prefix=/usr --with-apxs2=/usr/bin/apxs2 \
+		--with-config-file-path=/etc/php5/apache2 \
+		--with-config-file-scan-dir=/etc/php5/apache2/conf.d \
+		$(COMMON_CONFIG) \
+		$(CONFIGURE_APACHE_ARGS)
+	touch configure-apache2-stamp
+
+configure-apache2filter-stamp: 
+	#prepared-stamp
+	dh_testdir
+	if [ -d apache2filter-build ]; then rm -rf apache2filter-build; fi
+	-mkdir apache2filter-build
+	cd apache2filter-build && \
+        CFLAGS="$(CFLAGS)" PROG_SENDMAIL="$(PROG_SENDMAIL)" ../configure \
+		--prefix=/usr --with-apxs2filter=/usr/bin/apxs2 \
+		--with-config-file-path=/etc/php5/apache2filter \
+		--with-config-file-scan-dir=/etc/php5/apache2filter/conf.d \
+		$(COMMON_CONFIG) 
+	touch configure-apache2filter-stamp
+
+configure-cgi-stamp: 
+	#prepared-stamp
+	dh_testdir
+	if [ -d cgi-build ]; then rm -rf cgi-build; fi
+	-mkdir cgi-build
+	cd cgi-build && \
+        CFLAGS="$(CFLAGS)" PROG_SENDMAIL="$(PROG_SENDMAIL)" ../configure \
+		--prefix=/usr --enable-force-cgi-redirect --enable-fastcgi \
+		--with-config-file-path=/etc/php5/cgi \
+		--with-config-file-scan-dir=/etc/php5/cgi/conf.d \
+		$(COMMON_CONFIG) \
+		--enable-pcntl
+	touch configure-cgi-stamp
+
+configure-cli-stamp: 
+	#prepared-stamp
+	dh_testdir
+	if [ -d cli-build ]; then rm -rf cli-build; fi
+	-mkdir cli-build
+	cd cli-build && \
+        CFLAGS="$(CFLAGS)" PROG_SENDMAIL="$(PROG_SENDMAIL)" ../configure \
+		--prefix=/usr --disable-cgi \
+		--with-config-file-path=/etc/php5/cli \
+		--with-config-file-scan-dir=/etc/php5/cli/conf.d \
+		--enable-pcntl \
+		$(COMMON_CONFIG) \
+		--with-libedit
+	touch configure-cli-stamp
+
+configure-fpm-stamp: 
+	#prepared-stamp
+	dh_testdir
+	if [ -d fpm-build ]; then rm -rf fpm-build; fi
+	-mkdir fpm-build
+	cd fpm-build && \
+        CFLAGS="$(CFLAGS)" PROG_SENDMAIL="$(PROG_SENDMAIL)" ../configure \
+		--prefix=/usr --enable-fpm --disable-cgi \
+		--with-fpm-user=www-data --with-fpm-group=www-data \
+		--with-config-file-path=/etc/php5/fpm \
+		--with-config-file-scan-dir=/etc/php5/fpm/conf.d \
+		$(COMMON_CONFIG) \
+		--with-libevent-dir=/usr
+	touch configure-fpm-stamp
+
+clean: unprepared
+	dh_testdir
+	dh_testroot
+
+	rm -f configure-apache2-stamp build-apache2-stamp
+	rm -f configure-apache2filter-stamp build-apache2filter-stamp
+	rm -f configure-cgi-stamp build-cgi-stamp
+	rm -f configure-cli-stamp build-cli-stamp
+	rm -f configure-fpm-stamp build-fpm-stamp
+	rm -f build-pear-stamp
+	rm -f install-stamp
+	rm -rf apache2-build
+	rm -rf apache2filter-build
+	rm -rf cgi-build
+	rm -rf cli-build
+	rm -rf fpm-build
+	rm -rf pear-build pear-build-download
+	rm -f debian/copyright
+    # just in case the build tests failed, kill the running mysqld
+	$(SHELL) debian/setup-mysql.sh $(MYSQL_PORT) $(MYSQL_DATA_DIR) stop > /dev/null 2>&1 || exit 0
+	#rm -rf test-results.txt $(MYSQL_DATA_DIR)
+	dh_clean -Xorig
+
+	# clean up autogenerated cruft
+	for sapi in libapache2-mod-php54 libapache2-mod-php54filter php54-cgi php54-cli php54-fpm; do \
+		for cruft in postrm links; do \
+			rm -f debian/$${sapi}.$${cruft}; \
+		done; \
+	done
+
+PCNTL_FUNCTIONS := $(shell < ext/pcntl/php_pcntl.h sed -ne "/^PHP_FUNCTION/ s/PHP_FUNCTION(\(.*\));/\1/;t end;d;:end p" | tr '\n' ',')
+
+install: DH_OPTIONS=
+install: build
+	dh_testdir
+	dh_testroot
+	dh_prep
+	dh_installdirs
+
+	chmod 01733 debian/php54-common/var/lib/php5
+
+	# Add here commands to install the package into debian/php5.
+	# install apache2 DSO module
+	cp apache2-build/.libs/libphp5.so \
+		debian/libapache2-mod-php54/`apxs2 -q LIBEXECDIR`/
+	cp debian/libapache2-mod-php54.load \
+		debian/libapache2-mod-php54/etc/apache2/mods-available/php54.load
+	cp debian/libapache2-mod-php54.conf \
+		debian/libapache2-mod-php54/etc/apache2/mods-available/php54.conf
+
+	# Add here commands to install the package into debian/php5.
+	# install apache2 DSO filter module
+	cp apache2filter-build/.libs/libphp5.so \
+		debian/libapache2-mod-php54filter/`apxs2 -q LIBEXECDIR`/libphp5filter.so
+	cp debian/libapache2-mod-php54filter.load \
+		debian/libapache2-mod-php54filter/etc/apache2/mods-available/php54filter.load
+	cp debian/libapache2-mod-php54filter.conf \
+		debian/libapache2-mod-php54filter/etc/apache2/mods-available/php54filter.conf
+
+	# install the apache modules' files
+	cd apache2-build && $(MAKE) install-headers install-build install-modules install-programs INSTALL_ROOT=$(CURDIR)/debian/libapache2-mod-php54
+	# remove netware and win32 headers that we don't want
+	cd debian/libapache2-mod-php54/usr/include/php/ && \
+		  $(RM) TSRM/readdir.h \
+			TSRM/tsrm_config.nw.h TSRM/tsrm_config.w32.h\
+			TSRM/tsrm_nw.h TSRM/tsrm_win32.h\
+			Zend/zend_config.nw.h Zend/zend_config.w32.h\
+			main/config.nw.h main/config.w32.h\
+			main/win95nt.h
+
+	# install PEAR
+	cp -a pear-build/* debian/php54-pear/
+
+	# everything under usr/share/php/data except 'PEAR' is b0rken
+	# and actually needs to be fixed
+	[ ! -f debian/php54-pear/usr/share/php/data/Structures_Graph/LICENSE ] || \
+		$(RM) debian/php54-pear/usr/share/php/data/Structures_Graph/LICENSE
+	[ ! -f debian/php54-pear/usr/share/php/doc/PEAR/INSTALL ] || \
+		$(RM) debian/php54-pear/usr/share/php/doc/PEAR/INSTALL
+	[ ! -f debian/php54-pear/usr/share/php/doc/Structures_Graph/docs/generate.sh ] || \
+		$(RM) debian/php54-pear/usr/share/php/doc/Structures_Graph/docs/generate.sh
+	for f in Structures_Graph/publish.sh Structures_Graph/package.sh \
+		Structures_Graph/genpackage.xml.pl; do \
+		$(RM) debian/php54-pear/usr/share/php/data/$$f; \
+	done
+	# we don't want test suites
+	$(RM) -r debian/php54-pear/usr/share/php/test/
+	[ -d debian/php54-pear/usr/share/php/doc ] && { \
+		mkdir -p debian/php54-pear/usr/share/doc/php54-common/PEAR; \
+		mv debian/php54-pear/usr/share/php/doc/* \
+			debian/php54-pear/usr/share/doc/php54-common/PEAR/; \
+		$(RM) -r debian/php54-pear/usr/share/php/doc; \
+		ln -s ../doc/php-pear/PEAR debian/php54-pear/usr/share/php/doc; \
+		echo "Dummy placeholder to prevent the directory's deletion" > \
+			debian/php54-pear/usr/share/doc/php54-common/PEAR/.placeholder; \
+	}
+
+	# install extensions
+	ext=`./debian/libapache2-mod-php54/usr/bin/php-config --extension-dir`;\
+	for i in libapache2-mod-php54 libapache2-mod-php54filter php54-cgi php54-fpm php54-cli; do \
+		mkdir -p debian/$$i/$${ext}; \
+	done; \
+	cat debian/modulelist debian/extramodulelist | while read package extname dsoname priority; do \
+		if [ "$$package" = "mysqlnd" ]; then \
+			modulepath=cgi-build/modules; \
+		else \
+			modulepath=debian/libapache2-mod-php54/$${ext}; \
+		fi; \
+		if [ -z "$$dsoname" ]; then dsoname=$$package; fi; \
+		mkdir -p debian/php54-$$package$${ext}; \
+		install -m 644 -o root -g root \
+			$${modulepath}/$$dsoname.so \
+			debian/php54-$$package$${ext}/$$dsoname.so; \
+		rm debian/libapache2-mod-php54/$${ext}/$$dsoname.so; \
+	done
+
+	# install CGI
+	cp cgi-build/sapi/cgi/cgi-bin.php54 debian/php54-cgi/usr/lib/cgi-bin/php5
+	cp cgi-build/sapi/cgi/usr.bin.php54-cgi debian/php54-cgi/usr/bin/php5-cgi
+	cp cli-build/sapi/cli/php.1 debian/php54-cgi/usr/share/man/man1/php5-cgi.1
+
+	# install CLI
+	cp cli-build/sapi/cli/php debian/php54-cli/usr/bin/php5
+	ln debian/php54-cli/usr/bin/php5 debian/php54-cli/usr/bin/php
+	cp cli-build/sapi/cli/php.1 debian/php54-cli/usr/share/man/man1/php5.1
+
+	# install FPM
+	mkdir -p debian/php54-fpm/usr/sbin debian/php54-fpm/usr/share/man/man8/ debian/php54-fpm/etc/php5/fpm/pool.d
+	cp fpm-build/sapi/fpm/php-fpm debian/php54-fpm/usr/sbin/php5-fpm
+	cp fpm-build/sapi/fpm/php-fpm.8 debian/php54-fpm/usr/share/man/man8/php5-fpm.8
+	# we don't want the pool definitions on the main file itself:
+	sed -r '/('"'"'|\[)www('"'"'|\])/Q' < fpm-build/sapi/fpm/php-fpm.conf > \
+	    debian/php54-fpm/etc/php5/fpm/php-fpm.conf
+	# extract the first pool, called "www," from the config file:
+	sed -nr '/('"'"'|\[)www('"'"'|\])/{h;p;d};x;/www/{x;p}' < fpm-build/sapi/fpm/php-fpm.conf \
+	    > debian/php54-fpm/etc/php5/fpm/pool.d/www.conf
+
+	# move and install -dev files
+	dh_movefiles --sourcedir=debian/libapache2-mod-php54
+	rm -rf debian/libapache2-mod-php54/usr/lib/php5/gbuild/ \
+	       debian/libapache2-mod-php54/usr/include/ \
+	       debian/libapache2-mod-php54/usr/bin/
+	rm -rf debian/libapache2-mod-php54filter/usr/lib/php5/build/ \
+	       debian/libapache2-mod-php54filter/usr/include/ \
+	       debian/libapache2-mod-php54filter/usr/bin/
+	#for i in Makefile.global acinclude.m4 mkdep.awk phpize.m4 scan_makefile_in.awk; do \
+	#	chmod 644 debian/php5-dev/usr/lib/php5/build/$$i; \
+	#done
+	mkdir -p debian/php54-dev/usr/share/php
+	cp -a ext/skeleton ext/ext_skel debian/php54-dev/usr/share/php
+	sed -i 's/skel_dir="skeleton"/skel_dir="\/usr\/share\/php5\/skeleton"/' \
+	    debian/php54-dev/usr/share/php/ext_skel
+	# shipping duplicate files from other packages is hell for security audits
+	ln -sf /usr/share/misc/config.guess $(PHPIZE_BUILDDIR)/config.guess
+	ln -sf /usr/share/misc/config.sub $(PHPIZE_BUILDDIR)/config.sub
+	ln -sf /usr/share/aclocal/libtool.m4 $(PHPIZE_BUILDDIR)/libtool.m4
+	ln -sf $(LTMAIN_DIR)ltmain.sh $(PHPIZE_BUILDDIR)/ltmain.sh
+	ln -sf /usr/bin/shtool $(PHPIZE_BUILDDIR)/shtool
+	# make php-dev stuff versioned
+	for i in php-config phpize; do \
+		mv debian/php54-dev/usr/bin/$$i debian/php54-dev/usr/bin/"$$i"5; \
+		mv debian/php54-dev/usr/share/man/man1/"$$i".1 debian/php54-dev/usr/share/man/man1/"$$i"5.1; \
+	done
+	# remove windows devel file
+	rm $(CURDIR)/debian/php54-dev/usr/share/php/skeleton/skeleton.dsp
+
+	# install common files
+	# install -m755 debian/maxlifetime debian/php5-common/usr/lib/php5
+
+	# install lintian overrides
+	cp debian/php54.lintian-overrides $(CURDIR)/debian/php54-common/usr/share/lintian/overrides/php54-common
+	cp debian/php54-dev.lintian-overrides $(CURDIR)/debian/php54-dev/usr/share/lintian/overrides/php54-dev
+	cp debian/php54-pear.lintian-overrides $(CURDIR)/debian/php54-pear/usr/share/lintian/overrides/php54-pear
+
+	## install the apport hook
+	#install -D -m 644 debian/source_php5.py debian/php5-common/usr/share/apport/package-hooks/source_php5.py
+
+	# install some generic lintian overrides
+	#ext=`debian/php5-dev/usr/bin/php-config5 --extension-dir | cut -b2- `; \
+	#for sapi in php5-cli php5-fpm php5-cgi libapache2-mod-php5 libapache2-mod-php5filter; do \
+	#	mkdir -p $(CURDIR)/debian/"$$sapi"/usr/share/lintian/overrides/; \
+	#	sed "s/@sapi@/$$sapi/g;s,@extdir@,$$ext,g" \
+	#	    < $(CURDIR)/debian/php5-sapi.lintian-overrides | \
+	#	grep -E "^$${sapi}: " \
+	#	    >> $(CURDIR)/debian/"$$sapi"/usr/share/lintian/overrides/"$$sapi"; \
+	#done
+
+	# directories cleanup:
+	-rmdir -p debian/libapache2-mod-php54/usr/share/man/man1
+	-find debian/php54-pear -type d -exec rmdir --ignore-fail-on-non-empty -p '{}' \; >/dev/null 2>&1
+
+	touch install-stamp
+
+# Build architecture-independent files here.
+# Pass -i to all debhelper commands in this target to reduce clutter.
+binary-indep: DH_OPTIONS=-i
+binary-indep: build install
+	# Need this version of debhelper for DH_OPTIONS to work.
+	dh_testdir
+	dh_testroot
+	#cat debian/copyright.header LICENSE Zend/LICENSE > debian/copyright
+	cat LICENSE Zend/LICENSE > debian/copyright
+
+	dh_installdocs
+
+	for package in php54 php54-pear; do \
+		rm -rf debian/$$package/usr/share/doc/$$package; \
+		ln -s php54-common debian/$$package/usr/share/doc/$$package; \
+	done
+
+	dh_link
+	dh_compress -Xphp.ini
+	dh_fixperms
+	dh_installdeb
+	dh_gencontrol
+	dh_md5sums
+	dh_builddeb
+
+# Build architecture-dependent files here.
+binary-arch: build install
+	# Need this version of debhelper for DH_OPTIONS to work.
+	dh_testdir
+	dh_testroot
+	# Do this first so we don't overwrite any debhelper-generated files
+	#
+	# generate the maintscripts for various php
+	# modules from the templates.
+	cat debian/modulelist | while read package extname dsoname priority; do \
+		if [ -z "$$dsoname" ]; then dsoname=$$package; fi; \
+		sed -e"s/@extname@/$$extname/g; s/@dsoname@/$$dsoname/g; \
+		       /#EXTRA#/ r debian/php54-$${package}.postinst.extra" \
+		  < debian/php54-module.postinst \
+		| sed -e'/#EXTRA#/ d' \
+		  > debian/php54-$${package}.postinst; \
+		c=`grep -vE '^(#|set|$$|exit 0)' < debian/php54-$${package}.postinst | wc -l`; \
+		[ "$$c" != "0" ] || $(RM) debian/php54-$${package}.postinst; \
+	done
+
+	# generate the config snippets for various php
+	# modules from the templates.
+	cat debian/modulelist debian/extramodulelist | while read package extname dsoname priority; do \
+		if [ -z "$$dsoname" ]; then dsoname=$$package; fi; \
+		if [ -n "$$priority" ]; then prepend="$${priority}-"; else prepend=""; fi; \
+		mkdir -p debian/php54-$$package/etc/php5/conf.d; \
+		sed -e"s/@extname@/$$extname/g; s/@dsoname@/$$dsoname/g" \
+		  < debian/php54-module.ini \
+		  > debian/php54-$${package}/etc/php5/conf.d/$${prepend}$${dsoname}.ini; \
+	done
+
+	# likewise, for the different sapi implementations
+	for tmpl in postrm links; do \
+		for sapi in cgi cli fpm; do \
+			sed -e "s/@sapi@/$$sapi/g;s/@package@/php54-$${sapi}/g" \
+		  	< debian/php54-sapi.$$tmpl \
+		  	> debian/php54-$${sapi}.$$tmpl; \
+		done; \
+	done
+	for tmpl in postrm links; do \
+		sed -e "s/@sapi@/apache2/g;s/@package@/libapache2-mod-php54/g" \
+		  < debian/php54-sapi.$$tmpl \
+		  > debian/libapache2-mod-php54.$$tmpl; \
+		sed -e "s/@sapi@/apache2filter/g;s/@package@/libapache2-mod-php54filter/g" \
+		  < debian/php54-sapi.$$tmpl \
+		  > debian/libapache2-mod-php54filter.$$tmpl; \
+	done
+
+	sed -i -e 's|exit 0|export DPKG_MAINTSCRIPT_NAME=ubuntu; [ -x /usr/bin/dpkg-maintscript-helper ] \&\& dpkg-maintscript-helper mv_conffile /etc/php5/fpm/main.conf /etc/php5/gfpm/php-fpm.conf 5.3.5-1 -- \"\$\@\"\n\nexit 0|' debian/php54-fpm.postrm
+
+	#cat debian/copyright.header LICENSE Zend/LICENSE > debian/copyright
+	dh_installdocs -s
+
+	cat debian/modulelist | while read package extname dsoname priority; do \
+		rm -rf debian/php54-$$package/usr/share/doc/php54-$$package; \
+		ln -s php54-common debian/php54-$$package/usr/share/doc/php54-$$package; \
+	done
+
+	for package in php54-dbg php54-dev php54-cgi php54-cli php54-fpm libapache2-mod-php54 libapache2-mod-php54filter; do \
+		rm -rf debian/$$package/usr/share/doc/$$package; \
+		ln -s php54-common debian/$$package/usr/share/doc/$$package; \
+	done
+	dh_installcron -pphp54-common --name=php54
+	dh_installchangelogs -pphp54-common NEWS
+	dh_installinit
+	dh_strip -s --dbg-package=php54-dbg
+	dh_link -s
+	dh_compress -s -Xphp.ini
+	dh_fixperms -s -X /var/lib/php5
+	dh_installdeb -s
+	dh_shlibdeps -s
+
+	phpapi=`./debian/php54-dev/usr/bin/php-config5 --extension-dir|sed -e 's,.*/,,'`; \
+	for i in libapache2-mod-php54 libapache2-mod-php54filter php54-cgi php54-cli php54-fpm; do \
+		echo "php:Provides=phpapi-$${phpapi}" >> debian/$$i.substvars; \
+	done; \
+	cat debian/modulelist | while read package extname dsoname priority; do \
+		echo "php:Depends=phpapi-$${phpapi}" >> debian/php54-$$package.substvars; \
+	done
+
+	for i in cgi cli fpm; do \
+		"$$i"-build/sapi/cli/php -n -r '$(BUILTIN_EXTENSION_CHECK)' \
+			>> debian/php54-"$$i".substvars; \
+	done
+	for i in apache2; do \
+		"$$i"-build/sapi/cli/php -n -r '$(BUILTIN_EXTENSION_CHECK)' \
+			>> debian/lib"$$i"-mod-php54.substvars; \
+		"$$i"filter-build/sapi/cli/php -n -r '$(BUILTIN_EXTENSION_CHECK)' \
+			>> debian/lib"$$i"-mod-php54filter.substvars; \
+	done
+
+	echo "apache2:Depends=apache2-mpm-prefork (>> 2.0.52) | apache2-mpm-itk, apache2.2-common" >>debian/libapache2-mod-php54.substvars
+	echo "apache2:Depends=apache2-mpm-prefork (>> 2.0.52) | apache2-mpm-itk, apache2.2-common" >>debian/libapache2-mod-php54filter.substvars
+
+	echo "libtool:Conflicts=$(LIBTOOL_CONFLICTS)" >>debian/php54-dev.substvars
+	dh_gencontrol -s
+	dh_md5sums -s
+	dh_builddeb -s
+
+binary: binary-arch binary-indep
+

@@ -1,0 +1,25 @@
+#!/bin/sh
+set -e
+
+# Verify path in ini file is correct
+EXT_DIR=/usr/lib/php/220100525
+if [ -n "$EXT_DIR" ]; then
+	sed -e "s@\(zend_extension=\).*\(xdebug.so\)@\1$EXT_DIR/\2@g" -i /etc/php5/conf.d/xdebug.ini
+fi
+
+case "$1" in
+    configure)
+    ;;
+
+    abort-upgrade|abort-remove|abort-deconfigure)
+    ;;
+
+    *)
+        echo "postinst called with unknown argument \`$1'" >&2
+        exit 1
+    ;;
+esac
+
+#DEBHELPER#
+
+exit 0

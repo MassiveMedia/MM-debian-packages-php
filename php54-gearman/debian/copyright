@@ -1,0 +1,25 @@
+This work was packaged for Debian by:
+
+    Massive Media <admin@massivemedia.eu> on Thu, 17 Nov 2011 21:11:18 +0000
+
+It was downloaded from http://pecl.php.net/package/gearman
+
+Upstream Author(s):
+
+    James Luedke <contact@jamesluedke.com>
+    Herman Radtke <hradtke@php.net>
+
+Copyright:
+
+    2011 James M. Luedke, Herman J. Radtke
+
+License:
+
+    PHP
+
+The Debian packaging is:
+
+    Copyright (C) 2011 Massive Media <admin@massivemedia.eu>
+
+and is licensed under the GPL version 3, 
+see `/usr/share/common-licenses/GPL-3'.

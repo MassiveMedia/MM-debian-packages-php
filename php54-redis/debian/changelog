@@ -1,0 +1,5 @@
+php-redis (2.2.4-0mm1) lucid; urgency=low
+
+  * Initial Release
+
+ -- Wouter Verhelst <wouter@ubuntu>  Thu, 19 Sep 2013 09:11:02 +0200
