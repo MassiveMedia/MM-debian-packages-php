@@ -61,7 +61,7 @@ Standards-Version: 3.9.2
 Homepage: http://www.php.net/
 
 Package: php54
-Provides: php5, php
+Provides: php5
 Architecture: all
 Depends: ${misc:Depends}, libapache2-mod-php54 (>= ${source:Version}) | libapache2-mod-php54filter (>= ${source:Version}) | php54-cgi (>= ${source:Version}) | php54-fpm (>= ${source:Version}), php54-common (>= ${source:Version})
 Description: server-side, HTML-embedded scripting language (metapackage)
@@ -77,10 +77,13 @@ Description: server-side, HTML-embedded scripting language (metapackage)
 
 Package: php54-common
 Architecture: any
+Maintainer: Massive Media <admin@massivemedia.eu>
 Depends: ${misc:Depends}, sed (>= 4.1.1-1), ${shlibs:Depends}
-Provides: php5-json, php5-mhash, php5-common, php5-gd, php5-gmp, php5-intl, php5-mysql, php5-mysqlnd, php5-mysqli, php5-pgsql, php5-sqlite, php5-pdo-sqlite, php5-pdo-pgsql, php5-pdo-mysql, php54-json, php54-mhash, php54-common, php54-gd, php54-gmp, php54-intl, php54-mysql, php54-mysqlnd, php54-mysqli, php54-pgsql, php54-sqlite, php54-pdo-sqlite, php54-pdo-pgsql, php54-pdo-mysql, php5-mcrypt, php54-mcrypt, php5-curl, php54-curl, phpapi-220100525
-Conflicts: php5-json, php5-mhash, php5-common, php5-gd, php5-gmp, php5-intl, php5-mysql, php5-mysqlnd, php5-mysqli, php5-pgsql, php5-sqlite, php5-pdo-sqlite, php5-pdo-pgsql, php5-pdo-mysql, php5-curl
-Replaces: php5-json, php5-mhash, php5-common, php5-gd, php5-gmp, php5-intl, php5-mysql, php5-mysqlnd, php5-mysqli, php5-pgsql, php5-sqlite, php5-pdo-sqlite, php5-pdo-pgsql, php5-pdo-mysql, php5-curl
+Conflicts: php5-curl, php5-gd, php5-gmp, php5-intl, php5-json, php5-mhash, php5-mysql, php5-mysqli, php5-mysqlnd, php5-pdo-mysql, php5-pdo-pgsql, php5-pdo-sqlite, php5-pgsql, php5-sqlite, php5-common
+Replaces: php5-curl, php5-gd, php5-gmp, php5-intl, php5-json, php5-mhash, php5-mysql, php5-mysqli, php5-mysqlnd, php5-pdo-mysql, php5-pdo-pgsql, php5-pdo-sqlite, php5-pgsql, php5-sqlite, php5-common
+Provides: php5-curl, php5-gd, php5-gmp, php5-intl, php5-json, php5-mcrypt, php5-mhash, php5-mysql, php5-mysqli, php5-mysqlnd, php5-pdo-mysql, php5-pdo-pgsql, php5-pdo-sqlite, php5-pgsql, php5-sqlite, php54-curl, php54-gd, php54-gmp, php54-intl, php54-json, php54-mcrypt, php54-mhash, php54-mysql, php54-mysqli, php54-mysqlnd, php54-pdo-mysql, php54-pdo-pgsql, php54-pdo-sqlite, php54-pgsql, php54-sqlite, php54-common, php5-common, phpapi-220100525
+Section: php
+Priority: optional
 Description: Common files for packages built from the php54 source
  This package contains the documentation and example files relevant to all
  the other packages built from the php54 source.

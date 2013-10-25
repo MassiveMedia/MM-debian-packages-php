@@ -283,7 +283,6 @@ configure-cli-stamp:
 		--prefix=/usr --disable-cgi \
 		--with-config-file-path=/etc/php5/cli \
 		--with-config-file-scan-dir=/etc/php5/cli/conf.d \
-		--enable-pcntl \
 		$(COMMON_CONFIG) \
 		--with-libedit
 	touch configure-cli-stamp
@@ -426,7 +425,6 @@ install: build
 
 	# install CLI
 	cp cli-build/sapi/cli/php debian/php54-cli/usr/bin/php5
-	ln debian/php54-cli/usr/bin/php5 debian/php54-cli/usr/bin/php
 	cp cli-build/sapi/cli/php.1 debian/php54-cli/usr/share/man/man1/php5.1
 
 	# install FPM

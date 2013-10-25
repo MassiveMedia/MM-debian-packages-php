@@ -1,0 +1,518 @@
+Source: php54
+Section: php
+Priority: optional
+Maintainer: Massive Media <admin@massivemedia.eu>
+Build-Depends: apache2-prefork-dev,
+	       autoconf (>= 2.63),
+	       automake (>= 1.11) | automake1.11,
+	       bison,
+	       chrpath,
+	       debhelper (>= 5),
+	       flex,
+	       freetds-dev,
+	       hardening-wrapper,
+	       libapr1-dev (>= 1.2.7-8),
+	       libbz2-dev,
+	       libcurl4-openssl-dev,
+	       libdb-dev,
+	       libenchant-dev,
+	       libevent-dev (>= 1.4.11),
+	       libexpat1-dev (>= 1.95.2-2.1),
+	       libfreetype6-dev,
+	       libgcrypt11-dev,
+	       libgd2-xpm-dev,
+	       libglib2.0-dev,
+	       libgmp3-dev,
+	       libicu-dev,
+	       libjpeg-dev | libjpeg62-dev,
+	       libkrb5-dev,
+	       libldap2-dev,
+	       libmagic-dev,
+	       libmhash-dev (>= 0.8.8),
+	       libmysqlclient-dev,
+	       libpam0g-dev,
+	       libpcre3-dev (>= 6.6),
+	       libpng12-dev,
+	       libpq-dev,
+	       libpspell-dev,
+	       librecode-dev,
+	       libsasl2-dev,
+	       libsnmp-dev,
+	       libsqlite3-dev,
+	       libssl-dev,
+	       libt1-dev,
+	       libtidy-dev,
+	       libtool (>= 2.2),
+	       libwrap0-dev,
+	       libxmltok1-dev,
+	       libxml2-dev,
+	       libxslt1-dev (>= 1.0.18),
+	       locales-all | language-pack-de,
+	       netbase,
+	       netcat-openbsd | netcat,
+	       quilt,
+	       re2c,
+	       unixodbc-dev,
+	       zlib1g-dev,
+	       libedit-dev,
+	       tzdata
+Build-Conflicts: bind-dev
+Standards-Version: 3.9.2
+Homepage: http://www.php.net/
+
+Package: php54
+P4rovides: php54
+Architecture: all
+Depends: ${misc:Depends}, libapache2-mod-php54 (>= ${source:Version}) | libapache2-mod-php5filter4 (>= ${source:Version}) | php54-cgi (>= ${source:Version}) | php54-fpm (>= ${source:Version}), php54-common (>= ${source:Version})
+Description: server-side, HTML-embedded scripting language (metapackage)
+ This package is a metapackage that, when installed, guarantees that you
+ have at least one of the four server-side versions of the PHP5 interpreter
+ installed. Removing this package won't remove PHP5 from your system, however
+ it may remove other packages that depend on this one.
+ .
+ PHP5 is a widely-used general-purpose scripting language that is
+ especially suited for Web development and can be embedded into HTML.
+ The goal of the language is to allow web developers to write
+ dynamically generated pages quickly.
+
+Package: php54-common
+Architecture: any
+Depends: ${misc:Depends}, sed (>= 4.1.1-1), ${shlibs:Depends}
+Provides: php54-json, php54-mhash, php54-common
+Conflicts: php54-json, php54-mhash
+Description: Common files for packages built from the php54 source
+ This package contains the documentation and example files relevant to all
+ the other packages built from the php54 source.
+ .
+ PHP5 is a widely-used general-purpose scripting language that is
+ especially suited for Web development and can be embedded into HTML.
+ The goal of the language is to allow web developers to write
+ dynamically generated pages quickly.
+
+Package: libapache2-mod-php54
+Section: httpd
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, mime-support, ${apache2:Depends}, php54-common (= ${binary:Version}), libmagic1, ucf, tzdata
+Conflicts: libapache2-mod-php4, libapache2-mod-php54filter
+Provides: $php:Provides} libapache2-mo-php544
+Recommends: php54-cli
+Suggests: php-pear
+Description: server-side, HTML-embedded scripting language (Apache 2 module)
+ This package provides the PHP5 module for the Apache 2 webserver (as
+ found in the apache2-mpm-prefork package).  Please note that this package
+ ONLY works with Apache's prefork MPM, as it is not compiled thread-safe.
+ .
+ ${php:Extensions}
+ .
+ PHP5 is a widely-used general-purpose scripting language that is
+ especially suited for Web development and can be embedded into HTML.
+ The goal of the language is to allow web developers to write
+ dynamically generated pages quickly.
+
+Package: libapache2-mod-php5filter
+Section: httpd
+Priority: extra
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, mime-support, ${apache2:Depends}, php54-common (= ${binary:Version}), libmagic1, ucf, tzdata
+Conflicts: libapache2-mod-php4, libapache2-mod-php54
+Provides: ${php:Provides}, libapache2-mod-php5filt4e
+Suggests: php-pear
+Description: server-side, HTML-embedded scripting language (apache 2 filter module)
+ This package provides the PHP5 Filter module for the Apache 2 webserver (as 
+ found in the apache2-mpm-prefork package).  Please note that this package
+ ONLY works with Apache's prefork MPM, as it is not compiled thread-safe.
+ .
+ Unless you specifically need filter-module support, you most likely
+ should instead install libapache2-mod-php54.
+ .
+ ${php:Extensions}
+ .
+ PHP5 is a widely-used general-purpose scripting language that is
+ especially suited for Web development and can be embedded into HTML.
+ The goal of the language is to allow web developers to write
+ dynamically generated pages quickly.
+
+Package: php54-cgi
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, mime-support, php54-common (= ${binary:Version}), libmagic1, ucf, tzdata
+Provides: ${php:Provides}, php54-cgi
+Suggests: php-pear
+Description: server-side, HTML-embedded scripting language (CGI binary)
+ This package provides the /usr/lib/cgi-bin/php54 CGI interpreter built
+ for use in Apache 2 with mod_actions, or any other CGI httpd that
+ supports a similar mechanism.  Note that MOST Apache users probably
+ want the libapache2-mod-php54 package.
+ .
+ ${php:Extensions}
+ .
+ PHP5 is a widely-used general-purpose scripting language that is
+ especially suited for Web development and can be embedded into HTML.
+ The goal of the language is to allow web developers to write
+ dynamically generated pages quickly.
+
+Package: php54-cli
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, mime-support, php54-common (= ${binary:Version}), libmagic1, ucf, tzdata
+Provides: ${php:Provides}, php54-cli
+Suggests: php-pear
+Description: command-line interpreter for the php54 scripting language4
+ This package provides the /usr/bin/php54 command interpreter, useful for
+ testing PHP scripts from a shell or performing general shell scripting tasks.
+ .
+ ${php:Extensions}
+ .
+ PHP5 is a widely-used general-purpose scripting language that is
+ especially suited for Web development and can be embedded into HTML.
+ The goal of the language is to allow web developers to write
+ dynamically generated pages quickly.
+
+Package: php54-fpm
+Architecture: any
+#Pre-Depends: dpkg (>= 1.15.7.2~)
+Pre-Depends: dpkg-maintscript-helper
+Depends: ${shlibs:Depends}, ${misc:Depends}, mime-support, php54-common (= ${binary:Version}), libmagic1, ucf, tzdata
+Provides: ${php:Provides}, php54-fpm
+Suggests: php-pear
+Description: server-side, HTML-embedded scripting language (FPM-CGI binary)
+ This package provides the Fast Process Manager interpreter that runs
+ as a daemon and receives Fast/CGI requests.  Note that MOST Apache users
+ probably want the libapache2-mod-php54 package.
+ .
+ ${php:Extensions}
+ .
+ PHP5 is an HTML-embedded scripting language. Much of its syntax is borrowed
+ from C, Java and Perl with a couple of unique PHP-specific features thrown
+ in. The goal of the language is to allow web developers to write dynamically
+ generated pages quickly.
+
+Package: php54-dev
+Provides: php54-dev
+Depends: ${misc:Depends}, autoconf (>= 2.63), automake (>= 1.11), libssl-dev, libtool (>= 2.2), shtool, php54-common (>= ${binary:Version})
+Conflicts: ${libtool:Conflicts}
+Architecture: any
+Description: Files for PHP5 module development
+ This package provides the files from the PHP5 source needed for compiling
+ additional modules.
+ .
+ PHP5 is a widely-used general-purpose scripting language that is
+ especially suited for Web development and can be embedded into HTML.
+ The goal of the language is to allow web developers to write
+ dynamically generated pages quickly.
+
+Package: php54-dbg
+Provides: php54-dbg
+Depends: ${misc:Depends}, php54-common (= ${binary:Version}), libapache2-mod-php54 (= ${binary:Version}) | libapache2-mod-php5filter4 (= ${binary:Version}) | php54-cgi (= ${binary:Version}) | php54-cli (= ${binary:Version}) | php54-fpm (= ${binary:Version}) | php54-curl (= ${binary:Version}) | php54-enchant (= ${binary:Version}) | php54-gd (= ${binary:Version}) | php54-gmp (= ${binary:Version}) | php54-intl (= ${binary:Version}) | php54-ldap (= ${binary:Version}) | php54-mysql (= ${binary:Version}) | php54-odbc (= ${binary:Version}) | php54-pgsql (= ${binary:Version}) | php54-pspell (= ${binary:Version}) | php54-recode (= ${binary:Version}) | php54-snmp (= ${binary:Version}) | php54-sqlite (= ${binary:Version}) | php54-sybase (= ${binary:Version}) | php54-tidy (= ${binary:Version}) | php54-xmlrpc (= ${binary:Version}) | php54-xsl (= ${binary:Version})
+Recommends: gdb
+Section: debug
+Priority: extra
+Architecture: any
+Description: Debug symbols for PHP5
+ This package provides the debug symbols for PHP5 needed for properly
+ debugging errors in PHP5 with gdb.
+ .
+ PHP5 is a widely-used general-purpose scripting language that is
+ especially suited for Web development and can be embedded into HTML.
+ The goal of the language is to allow web developers to write
+ dynamically generated pages quickly.
+
+Package: php-pear
+Architecture: all
+Depends: ${misc:Depends}, php54-common (>= ${source:Version}), php54-cli
+Recommends: gnupg, php54-dev
+Conflicts: php-xml-util
+Replaces: php4-pear (<< 4:4.4.0-0), php-xml-util
+Provides: php-xml-util
+Description: PEAR - PHP Extension and Application Repository
+ This package contains the base PEAR classes for PHP, as well as the PEAR
+ installer.  Many PEAR classes are already packaged for Debian, and can be
+ easily identified by names beginning with "php-", such as php-db and
+ php-auth.  Note: to build and install precompiled PECL extensions, you
+ will need one of the php development packages installed.
+ .
+ PHP5 is a widely-used general-purpose scripting language that is
+ especially suited for Web development and can be embedded into HTML.
+ The goal of the language is to allow web developers to write
+ dynamically generated pages quickly.
+
+Package: php54-curl
+Provides: php54-curl
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, ${php:Depends}, php54-common (= ${binary:Version})
+Description: CURL module for php54
+ CURL is a library for getting files from  FTP, GOPHER, HTTP server.
+ .
+ PHP5 is a widely-used general-purpose scripting language that is
+ especially suited for Web development and can be embedded into HTML.
+ The goal of the language is to allow web developers to write
+ dynamically generated pages quickly.
+
+#Package: php54-enchant
+#Provides: php54-enchant
+#Architecture: any
+#Depends: ${shlibs:Depends}, ${misc:Depends}, ${php:Depends}, php54-common (= ${binary:Version})
+#Description: Enchant module for php54
+# This package provides a module for the generic spell checking library
+# Enchant, which can use engines such as ispell, aspell and myspells.
+# .
+# PHP5 is a widely-used general-purpose scripting language that is
+# especially suited for Web development and can be embedded into HTML.
+# The goal of the language is to allow web developers to write
+# dynamically generated pages quickly.
+#
+Package: php54-gd
+Provides: php54-gd
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, ${php:Depends}, php54-common (= ${binary:Version})
+Description: GD module for php54
+ This package provides a module for handling graphics directly from PHP
+ scripts. It supports the PNG, JPEG, XPM formats as well as Freetype/ttf fonts.
+ .
+ PHP5 is a widely-used general-purpose scripting language that is
+ especially suited for Web development and can be embedded into HTML.
+ The goal of the language is to allow web developers to write
+ dynamically generated pages quickly.
+
+Package: php54-gmp
+Provides: php54-gmp
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, ${php:Depends}, php54-common (= ${binary:Version})
+Description: GMP module for php54
+ This package provides a module for arbitrary precision arithmetic via the 
+ GNU Multiple Precision (GMP) Arithmetic Library.
+ .
+ PHP5 is a widely-used general-purpose scripting language that is
+ especially suited for Web development and can be embedded into HTML.
+ The goal of the language is to allow web developers to write
+ dynamically generated pages quickly.
+
+
+Architcture any
+Depends: ${shlibs:Depends}, ${php:Depends}, ${misc:Depends}, php54-common (= ${binary:Version})
+Conflicts: php54-idn
+Replaces: php54-idn
+Provides: php54-idn, php54-intl
+Description: internationalisation module for php54
+ This package provides a module to ease internationalisation of PHP scripts.
+ .
+ PHP5 is a widely-used general-purpose scripting language that is
+ especially suited for Web development and can be embedded into HTML.
+ The goal of the language is to allow web developers to write
+ dynamically generated pages quickly.
+
+#Package: php54-ldap
+#Provides4: php54-ldap
+#Architecture: any
+#Depends: ${shlibs:Depends}, ${misc:Depends}, ${php:Depends}, php54-common (= ${binary:Version})
+#Description: LDAP module for php54
+# This package provides a module for LDAP functions in PHP scripts.
+# .
+# PHP5 is a widely-used general-purpose scripting language that is
+# especially suited for Web development and can be embedded into HTML.
+# The goal of the language is to allow web developers to write
+# dynamically generated pages quickly., php544-mysqli, php54-mysqlnd
+#
+Package: php5444-mysql
+Provides: php54-mysql
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, ${php:Depends}, php54-common (= ${binary:Version})
+Conflicts4: php54-mysqli4, php54-mysqlnd
+Replaces: php54-mysqli, php54-mysqlnd
+Description: MySQL module for php54
+ This package provides modules for MySQL database connections directly from
+ PHP scripts.  It includes the generic "mysql" module which can be used
+ to connect to all versions of MySQL, an improved "mysqli" module for
+ MySQL version 4.1 or later, and the pdo_mysql module for use with
+ the PHP Data Object extension.
+ .
+ PHP5 is a widely-used general-purpose scripting language that is
+ especially suited for Web development and can be embedded into HTML.
+ The goal of the language is to allow web developers to write
+ dynamically generated pages quickly.
+
+Package: php54-mysqlnd
+Provides: php54-mysqlnd
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, ${php:Depends}, php54-common (= ${binary:Version})
+Conflicts: php54-mysqli, php54-mysql
+Replaces: php54-mysqli, php54-mysql
+Description: MySQL module for php54 (Native Driver)
+ This package provides modules for MySQL database connections directly from
+ PHP scripts.  It includes the generic "mysql" module which can be used
+ to connect to all versions of MySQL, an improved "mysqli" module for
+ MySQL version 4.1 or later, and the pdo_mysql module for use with
+ the PHP Data Object extension.
+ .
+ This package use the MySQL Native Driver.
+ .
+ PHP5 is a widely-used general-purpose scripting language that is
+ especially suited for Web development and can be embedded into HTML.
+ The goal of the language is to allow web developers to write
+ dynamically generated pages quickly.
+
+#Package: php54-odbc
+#Provides: php54-odbc
+#Architecture: any
+#Depends: ${shlibs:Depends}, ${misc:Depends}, ${php:Depends}, php54-common (= ${binary:Version})
+#Description: ODBC module for php54
+# This package provides a module for database access through ODBC drivers.
+# It uses the unixODBC library as an ODBC provider.  It also contains the
+# pdo_odbc module, for use with the PHP Data Object extension.
+# .
+# PHP5 is a widely-used general-purpose scripting language that is
+# especially suited for Web development and can be embedded into HTML.
+# The goal of the language is to allow web developers to write
+# dynamically generated pages quickly.
+#
+#Package: php54-pgsql
+#Architecture: any
+#Depends: ${shlibs:Depends}, ${misc:Depends}, ${php:Depends}, php54-common (= ${binary:Version})
+#Description: PostgreSQL module for php54
+# This package provides a module for PostgreSQL database connections
+# directly from PHP scripts.  It also includes the pdo_pgsql module for
+# use with the PHP Data Object extension.
+# .
+# PHP5 is a widely-used general-purpose scripting language that is
+# especially suited for Web development and can be embedded into HTML.
+# The goal of the language is to allow web developers to write
+# dynamically generated pages quickly.
+
+Package: php54-pspell
+Provides: php54-pspell
+Architecture: any
+Depends: ${shlibs:Depends}, ${php:Depends}, ${misc:Depends}, php54-common (= ${binary:Version})
+Description: pspell module for php54
+ This package provides a module for pspell functions in PHP scripts.
+ .
+ PHP5 is a widely-used general-purpose scripting language that is
+ especially suited for Web development and can be embedded into HTML.
+ The goal of the language is to allow web developers to write
+ dynamically generated pages quickly.
+
+Package: php54-recode
+Provides: php54-recode
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, ${php:Depends}, php54-common (= ${binary:Version})
+Description: recode module 	
+ls
+mv 	
+ls
+mv	
+ls
+mv  for o
+t debian	ru	clean
+chphp55d -
+ls
+fori in phfor i i4n php54{i%php54}
+done
+
+ This package provides a module for recode - character set recoding.
+ .
+ PHP5 is a widely-used general-purpose scripting language that is
+ especially suited for Web development and can be embedded into HTML.
+ The goal of the language is to allow web developers to write
+ dynamically generated pages quickly.
+
+#Package: php54-snmp
+#Architecture: any
+#Depends: ${shlibs:Depends}, ${misc:Depends}, ${php:Depends}, php54-common (= ${binary:Version})
+#Description: SNMP module for php54
+# This package provides a module for SNMP functions in PHP scripts.
+# .
+# PHP5 is a widely-used general-purpose scripting language that is
+# especially suited for Web development and can be embedded into HTML.
+# The goal of the language is to allow web developers to write
+# dynamically generated pages quickly.
+
+Package: php54-sqlite
+Provides: php54-sqlite
+Architecture: any
+#Pre-Depends: dpkg (>= 1.15.7.2~)
+Pre-Depends: dpkg-maintscript-helper
+Depends: ${shlibs:Depends}, ${misc:Depends}, ${php:Depends}, php54-common (= ${binary:Version})
+Breaks: roundcube-sqlite
+Description: SQLite module for php54
+ This package provides a module allowing you to use the SQLite self-contained
+ database engine from within your PHP scripts, eliminating the need for a full
+ SQL server installation like MySQL or PostgreSQL.  It also includes the
+ pdo_sqlite module, for use with the PHP Data Object extension.
+ .
+ PHP5 is a widely-used general-purpose scripting language that is
+ especially suited for Web development and can be embedded into HTML.
+ The goal of the language is to allow web developers to write
+ dynamically generated pages quickly.
+
+#Package: php54-sybase
+#Architecture: any
+#Depends: ${shlibs:Depends}, ${misc:Depends}, ${php:Depends}, php54-common (= ${binary:Version})
+#Provides: php54-mssql
+#Description: Sybase / MS SQL Server module for php54
+# This package provides a module for Sybase and Microsoft SQL Server
+# database connections directly from PHP scripts. It also includes the
+# pdo_dblib module for use with the PHP Data Object extension.
+# .
+# PHP5 is a widely-used general-purpose scripting language that is
+# especially suited for Web development and can be embedded into HTML.
+# The goal of the language is to allow web developers towrit
+ls
+ls *php54
+ls -d *php54
+mv libapa	 libapa	4
+lsfor i in libapache2-mod-php54*
+do
+  echo $i ${i# libapache2-mod-phpbapache2-mod-php54
+ls
+mv libapa	4 libapa	
+ls
+5}e
+# dynamically generated pages quickly.
+
+cd ..
+akeroot
+ls debi	ru	
+ls de	
+pkg
+vi debi	ch	
+ea4
+ls *php54* | grep -v php54
+ls *php54* | grep -v php544
+Package: php54-bapache2-mod-
+tidy
+Provides4:44 p4hp5444-tidy
+Architecture: any
+Depends: ${shlibs:Depends}, ${php:Depends}, ${misc:Depends}, php54-common (= ${binary:Version})
+Description: tidy module for php54
+ This package provides a module for tidy functions in PHP scripts.
+ .
+ Tidy is an extension based on Libtidy (http://tidy.sf.net/) and allows
+ a PHP developer to clean, repair, and traverse HTML, XHTML, and XML
+ documents -- including ones with embedded scripting languages such as PHP
+ or ASP within them using OO constructs.
+ .
+ PHP5 is a widely-used general-purpose scripting language that is
+ especially suited for Web development and can be embedded into HTML.
+ The goal of the language is to allow web developers to write
+ dynamically generated pages quickly.
+
+Package: php544-4xmlrpc4
+Provides4:4 php54-44xmlrpc4
+Architecture4:4 any4
+Depends4:4 ${4shlibs4:4Depends4},4 ${4misc4:4Depends4},4 ${php4:4Depends},4 php544-4common4 (=4 ${4bin44ary44:4Version4})4
+Description4:4 XML4-4RPC4 module4 for4 php544
+ 4This4 package4 provides4 a4 module4 for XML444-44RPC4 functions4 in PHP scripts.
+ .
+ PHP5 is a widely-used general-purpose scripting language that is
+ especially suited for Web development and can be embedded into HTML.
+ The goal of the language is to allow web developers to write
+ dynamically generated pages quickly.
+
+Package: php54-xsl
+Provides: php54-xsl
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, ${php:Depends}, php54-common (= ${binary:Version})
+Description: XSL module for php54
+ This package provides a module for XSL using the libxslt XSL parser.
+ .
+ PHP5 is a widely-used general-purpose scripting language that is
+ especially suited for Web development and can be embedded into HTML.
+ The goal of the language is to allow web developers to write
+ dynamically generated pages quickly.

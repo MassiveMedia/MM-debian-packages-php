@@ -1,32 +1,14 @@
-php54 (5.4.20-0mm3) lucid; urgency=low
-
-  * added pcntl to cli
-
- -- Massive Media <admin@massivemedia.eu>  Thu, 03 Oct 2013 12:34:01 +0000
-
-php54 (5.4.20-0mm2) lucid; urgency=low
-
-  * stupid api
-
- -- Massive Media <admin@massivemedia.eu>  Thu, 03 Oct 2013 10:27:38 +0000
-
 php54 (5.4.20-0mm1) lucid; urgency=low
-
-  * corrected version numbers
-
- -- Massive Media <admin@massivemedia.eu>  Thu, 03 Oct 2013 08:42:06 +0000
-
-php54 (5.4.20-0ubuntu1) lucid; urgency=low
 
   * New upstream release
 
- -- Massive Media <hannes@buildbox04.netnoc>  Thu, 03 Oct 2013 07:15:56 +0000
+ -- Massive Media <admin@massivemdia.eu>  Thu, 24 Oct 2013 12:04:38 +0000
 
-php54 (5.4.16-0mm4) lucid; urgency=low
+php54 (5.4.16-0mm5) lucid; urgency=low
 
-  * bump the version
+  * balhbalhbalh
 
- -- Massive Media <hannes@buildbox04.netnoc>  Thu, 19 Sep 2013 07:22:32 +0000
+ -- Massive Media <admin@massivemedia.eu>  Mon, 23 Sep 2013 12:10:41 +0000
 
 php54 (5.4.16-0mm1) lucid; urgency=low
 
