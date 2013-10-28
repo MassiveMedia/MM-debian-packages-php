@@ -1,0 +1,14 @@
+This is to easily create another php package.
+
+To use:
+- copy the debian directory into the source directory
+- Create a debian/copyright file with license information (this file is
+  free-form)
+- Edit debian/rules, add any needed configure arguments to the
+  override_dh_auto_configure target
+- Edit debian/control, follow the instructions there.
+- Replace any instance of PACKAGE in debian/control and debian/PACKAGE.install
+  by your package name
+- rename debian/PACKAGE.install to the right location, similar to above
+- run 'dch --create', and edit the initial changelog entry
+- run dpkg-buildpackage, as usual.

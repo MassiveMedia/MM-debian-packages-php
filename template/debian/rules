@@ -1,0 +1,41 @@
+#!/usr/bin/make -f
+# -*- makefile -*-
+
+# Uncomment this to turn on verbose mode.
+#export DH_VERBOSE=1
+
+# Set some variables
+CFLAGS = -O2 -Wall
+CFLAGS += -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64
+
+PHPIZE=/usr/bin/phpize
+PHPCONFIG=/usr/bin/php-config
+EXT_DIR=$(shell $(PHPCONFIG) --extension-dir)
+
+ifneq (,$(findstring debug,$(DEB_BUILD_OPTIONS)))
+	CFLAGS += -g
+	DEBUG := --enable-debug
+else
+	DEBUG := --disable-debug
+endif
+
+# This will do the "hard work"
+%:
+	dh $@
+
+# ... except it will do some things slightly incorrectly for this
+# particular package, so add some overrides:
+override_dh_auto_configure:
+	# We need to run phpize before configure can be called
+	$(PHPIZE)
+	./configure --prefix=/usr # extra configure options go here
+
+override_dh_auto_install:
+	# dh_auto_install uses DESTDIR rather than INSTALL_ROOT, so fix
+	[ -f debian/PACKAGE.install ] && false
+	$(MAKE) INSTALL_ROOT=$(CURDIR)/debian/tmp install
+
+override_dh_gencontrol:
+	# We need to add php:Depends to the substvars file
+	for i in $(shell dh_listpackages); do echo "php:Depends=phpapi-`php-config --phpapi`" >> debian/$$i.substvars; done
+	dh_gencontrol

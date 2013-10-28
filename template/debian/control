@@ -1,0 +1,18 @@
+Source: PACKAGE
+Section: web
+Priority: optional
+Maintainer: Massive Media <admin@massivemedia.eu>
+# Add any library packages needed to build this package to the next line
+Build-Depends: debhelper (>= 7), php5-dev
+Standards-Version: 3.8.3
+Homepage: http://pecl.php.net/package/PACKAGE
+
+Package: php5-gearman
+Architecture: any
+# Add any needed dependencies to the next line (ignore shared libraries,
+# shlibs:Depends takes care of that)
+Depends: ${shlibs:Depends}, ${misc:Depends}, ${php:Depends}
+Description: <short description, 60 characters max>
+ <long description, indented with one space>
+ .
+ <second paragraph of long description. Yes, the dot is important.>
