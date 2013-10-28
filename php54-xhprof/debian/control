@@ -2,7 +2,7 @@ Source: xhprof
 Section: devel
 Priority: optional
 Maintainer: Laszlo Boszormenyi (GCS) <gcs@debian.hu>
-Build-Depends: debhelper (>= 7), php54-dev
+Build-Depends: debhelper (>= 7), php5-dev
 Standards-Version: 3.9.4
 Homepage: http://pecl.php.net/package/xhprof
 

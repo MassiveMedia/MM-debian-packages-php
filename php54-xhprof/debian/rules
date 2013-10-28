@@ -1,81 +1,48 @@
 #!/usr/bin/make -f
 # -*- makefile -*-
 
-#Uncomment this to turn on verbose mode.
+# Uncomment this to turn on verbose mode.
 #export DH_VERBOSE=1
 
-DESTDIR=$(CURDIR)/debian/php54-xhprof
+# Set some variables
+CFLAGS = -O2 -Wall
+CFLAGS += -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64
 
-export DEB_BUILD_MAINT_OPTIONS = hardening=+all
-DPKG_EXPORT_BUILDFLAGS = 1
-#include /usr/share/dpkg/buildflags.mk
+PHPIZE=/usr/bin/phpize
+PHPCONFIG=/usr/bin/php-config
+EXT_DIR=$(shell $(PHPCONFIG) --extension-dir)
 
-DEB_HOST_GNU_TYPE    ?= $(shell dpkg-architecture -qDEB_HOST_GNU_TYPE)
-
-# Enable IEEE-conformant floating point math on alphas (not the default)
-ifeq (alpha-linux-gnu,$(DEB_HOST_GNU_TYPE))
-	CFLAGS += -mieee
-endif
-
-ifeq ($(DEB_HOST_GNU_TYPE), $(findstring $(DEB_HOST_GNU_TYPE), ia64-linux-gnu powerpc64-linux-gnu))
+ifneq (,$(findstring debug,$(DEB_BUILD_OPTIONS)))
 	CFLAGS += -g
+	DEBUG := --enable-debug
 else
-	CFLAGS += -gstabs
+	DEBUG := --disable-debug
 endif
 
-configure: configure-stamp
-configure-stamp:
-	cd $(CURDIR)/extension/ && phpize5 && \
-		./configure --prefix=/usr --with-php-config=/usr/bin/php-config5
-	touch $@
+# This will do the "hard work"
+%:
+	dh $@
 
-build-arch:
-build-indep:
-build: build-stamp
+# ... except it will do some things slightly incorrectly for this
+# particular package, so add some overrides:
+override_dh_auto_configure:
+	# We need to run phpize before configure can be called
+	cd $(CURDIR)/extension/ && $(PHPIZE)
+	cd $(CURDIR)/extension/ && ./configure --with-gearman --prefix=/usr
 
-build-stamp: configure
-	cd $(CURDIR)/extension/ && $(MAKE) DESTDIR=$(DESTDIR)
-	touch $@
+override_dh_auto_build:
+	cd $(CURDIR)/extension/ && $(MAKE) DESTDIR=debian/tmp
 
-clean:
-	dh_testdir
-	dh_testroot
+override_dh_auto_clean:
 	cd $(CURDIR)/extension/ && phpize --clean
 	rm -f $(CURDIR)/jquery.autocomplete.css
 	dh_clean
 
-install: check
-	dh_testdir
-	dh_testroot
-	dh_prep
-	cd $(CURDIR)/extension/ && $(MAKE) install INSTALL_ROOT=$(DESTDIR)
-	install -D -m 644 debian/xhprof.ini \
-		$(DESTDIR)/etc/php5/conf.d/xhprof.ini
+override_dh_auto_install:
+	# dh_auto_install uses DESTDIR rather than INSTALL_ROOT, so fix
+	cd $(CURDIR)/extension/ && $(MAKE) INSTALL_ROOT=$(CURDIR)/debian/tmp install
 
-check: build
-	# TODO: check why all tests fail
-#	cd $(CURDIR)/extension/ && $(MAKE) test
-
-binary-indep: install
-
-binary-arch: install
-	dh_testdir
-	dh_testroot
-	dh_installdirs -a
-	dh_installchangelogs -a
-	dh_installdocs -a
-	dh_installexamples -a
-	dh_install -a
-	dh_link -a
-	dh_strip -a
-	dh_compress -a
-	dh_fixperms -a
-	dh_installdeb -a
-	dh_shlibdeps -a
-	echo "php:Depends=phpapi-`php-config5 --phpapi`" >> debian/php5-xhprof.substvars
-	dh_gencontrol -a
-	dh_md5sums -a
-	dh_builddeb -a
-
-binary: binary-indep binary-arch
-.PHONY: clean binary-indep binary-arch binary install
+override_dh_gencontrol:
+	# We need to add php:Depends to the substvars file
+	for i in $(shell dh_listpackages); do echo "php:Depends=phpapi-`php-config --phpapi`" >> debian/$$i.substvars; done
+	dh_gencontrol
