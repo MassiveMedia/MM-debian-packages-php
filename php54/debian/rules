@@ -179,6 +179,16 @@ build-apache2-stamp: configure-apache2-stamp
 
 	touch build-apache2-stamp
 
+# php upstream has their own ideas about which version of libtool to
+# use, but we disagree.
+# They have hacked out the auto-update feature of libtool to prevent
+# more recent versions from being used, so override that by manually
+# calling these tools. 
+am-refresh:
+	aclocal
+	libtoolize --force
+	autoreconf -f -i
+
 build-apache2filter-stamp: configure-apache2filter-stamp
 	dh_testdir
 	cd apache2filter-build && $(MAKE)
@@ -230,7 +240,7 @@ build-pear-stamp: build-cgi-stamp
 	#patch -s -d $(CURDIR)/pear-build/usr/share/php/ -p1 -i $(CURDIR)/debian/patches/PEAR-Builder-print-info-about-php5-dev.patch
 	touch build-pear-stamp
 
-configure: configure-apache2-stamp configure-apache2filter-stamp configure-cli-stamp configure-fpm-stamp configure-cgi-stamp
+configure: am-refresh configure-apache2-stamp configure-apache2filter-stamp configure-cli-stamp configure-fpm-stamp configure-cgi-stamp
 
 configure-apache2-stamp: 
 	#prepared-stamp
