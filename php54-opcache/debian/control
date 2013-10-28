@@ -1,24 +1,17 @@
-Source: php54-opcache
-Section: php
+Source: php-opcache
+Section: web
 Priority: optional
-Maintainer: Sascha Kettler <kettler@gmx.net>
-Build-Depends: php54, php54-dev, autotools-dev, shtool, chrpath, debhelper (>= 5)
-Standards-Version: 3.9.3
-Homepage: http://www.php.net/
+Maintainer: Massive Media <admin@massivemedia.eu>
+Build-Depends: debhelper (>= 7), php5-dev
+Standards-Version: 3.8.3
+Homepage: https://github.com/zendtech/ZendOptimizerPlus
 
 Package: php54-opcache
-Architecture: i386 amd64
-Depends: ${shlibs:Depends}, ${misc:Depends}, php54
-#Conflicts: php54-apc
-Description: The Zend OPcache
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: The Zend OPcache for PHP
  The Zend OPcache provides faster PHP execution through opcode caching and
  optimization. It improves PHP performance by storing precompiled script
- bytecode in the shared memory. This eliminates the stages of reading code from
- the disk and compiling it on future access. In addition, it applies a few
+ bytecode in the shared memory. This eliminates the stages of reading code
+ from the disk and compiling it on future access. In addition, it applies a few
  bytecode optimization patterns that make code execution faster.
- .
- NOTE: In case you are going to use Zend OPcache together with Xdebug,
- be sure that Xdebug is loaded after OPcache. "php -v" must show Xdebug
- after OPcache. 
- .
- https://github.com/zendtech/ZendOptimizerPlus/
