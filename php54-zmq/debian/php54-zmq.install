@@ -1,2 +1,2 @@
 debian/zmq.ini /etc/php5/conf.d/
-usr/lib/php5/*
+usr/lib/php/*
