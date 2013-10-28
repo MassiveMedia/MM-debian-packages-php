@@ -11,7 +11,7 @@ Provides: php5-gearman
 Replaces: php5-gearman
 Conflicts: php5-gearman
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, libgearman6 (>= 0.27)
+Depends: ${shlibs:Depends}, ${misc:Depends}, ${php:Depends}, libgearman6 (>= 0.27)
 Description: PHP wrapper to libgearman
  This extension uses libgearman library to provide API for
  communicating with gearmand, and writing clients and workers.
