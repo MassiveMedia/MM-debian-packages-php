@@ -1,16 +1,17 @@
 #!/usr/bin/make -f
-# template debian/rules provided by dh-make-php.
-# GNU copyright 2005 by Uwe Steinmann.
-# modified for php5-apc by Pietro Ferrari
+# -*- makefile -*-
 
 # Uncomment this to turn on verbose mode.
 #export DH_VERBOSE=1
 
-# This has to be exported to make some magic below work.
-export DH_OPTIONS
-
+# Set some variables
 CFLAGS = -O2 -Wall
 CFLAGS += -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64
+
+PHPIZE=/usr/bin/phpize
+PHPCONFIG=/usr/bin/php-config
+EXT_DIR=$(shell $(PHPCONFIG) --extension-dir)
+
 ifneq (,$(findstring debug,$(DEB_BUILD_OPTIONS)))
 	CFLAGS += -g
 	DEBUG := --enable-debug
@@ -18,88 +19,29 @@ else
 	DEBUG := --disable-debug
 endif
 
-PECL_PKG_NAME=apc
-PECL_PKG_REALNAME=APC
-PACKAGE_NAME=php54-apc
-PHPIZE=/usr/bin/phpize
-PHPCONFIG=/usr/bin/php-config
-EXT_DIR=$(shell $(PHPCONFIG) --extension-dir)
-SOURCE_DIR=$(shell echo $(PECL_PKG_REALNAME)-*)
+# This will do the "hard work"
+%:
+	dh $@
 
-phpapiver=$(shell $(PHPCONFIG) --phpapi)
+# ... except it will do some things slightly incorrectly for this
+# particular package, so add some overrides:
+override_dh_auto_configure:
+	# We need to run phpize before configure can be called
+	$(PHPIZE)
+	# This should be modified for each package...
+	./configure --with-php-config=/usr/bin/php-config --prefix=/usr --enable-apc --enable-apc-mmap
 
-configure: configure-stamp
+override_dh_auto_install:
+	# dh_auto_install uses DESTDIR rather than INSTALL_ROOT, so fix
+	$(MAKE) INSTALL_ROOT=$(CURDIR)/debian/tmp install
 
-configure-stamp:
-	dh_testdir
-	(cd $(SOURCE_DIR); \
-	$(PHPIZE); \
-	./configure --with-php-config=$(PHPCONFIG) --prefix=/usr \
-	--enable-apc --enable-apc-mmap )
-	touch $@
+override_dh_installchangelogs:
+	dh_installchangelogs CHANGELOG
 
-build-arch: build
-
-build-indep: build
-
-build: build-stamp
-
-build-stamp: configure
-	dh_testdir
-	(cd $(SOURCE_DIR); $(MAKE); mkdir -p ../tmp/modules; cp -p modules/* ../tmp/modules;)
-	touch build-stamp
-
-clean:
-	dh_clean
-	dh_testdir
-	dh_testroot
-	rm -f build-stamp configure-stamp
-	rm -rf tmp
-	rm -rf debian/$(PACKAGE_NAME)
-	(cd $(SOURCE_DIR); \
-	$(MAKE) clean; \
-	$(PHPIZE) --clean)
-
-install: build
-	dh_testdir
-	dh_testroot
-	# can't dh_clean here without specifically excluding the possibly existing installed dirs
-	# for other version.
-	#dh_clean -k
-	dh_installdirs
-	mkdir -p debian/$(PACKAGE_NAME)/$(EXT_DIR)
-	install -m 644 -o root -g root tmp/modules/$(PECL_PKG_NAME).so debian/$(PACKAGE_NAME)/$(EXT_DIR)/$(PECL_PKG_NAME).so
-	if [ -f "debian/$(PECL_PKG_NAME).ini" ]; then \
-		mkdir -p debian/$(PACKAGE_NAME)/etc/php5/conf.d/; \
-		cp debian/$(PECL_PKG_NAME).ini debian/$(PACKAGE_NAME)/etc/php5/conf.d/; \
-	fi
-	# copy the apc.php script to /usr/share/doc/php-apc
-	# this script provides some statistics about php-apc use.
-	if [ -f "$(SOURCE_DIR)/apc.php" ]; then \
-		mkdir -p debian/$(PACKAGE_NAME)/usr/share/doc/$(PACKAGE_NAME); \
-		cp $(SOURCE_DIR)/apc.php debian/$(PACKAGE_NAME)/usr/share/doc/$(PACKAGE_NAME); \
-	fi
-
-# Build architecture-independent files here.
-binary-indep:
-
-# Build architecture-dependent files here.
-binary-arch: install
-	echo "php:Depends=phpapi-$(phpapiver)" >> debian/$(PACKAGE_NAME).substvars
-	dh_testdir
-	dh_testroot
-	dh_installdocs $(SOURCE_DIR)/TODO
-	dh_installchangelogs $(SOURCE_DIR)/CHANGELOG
-ifeq (,$(findstring nostrip,$(DEB_BUILD_OPTIONS)))
-	dh_strip
-endif
+override_dh_compress:
 	dh_compress -Xapc.php
-	dh_fixperms
-	dh_installdeb
-	dh_shlibdeps
-	dh_gencontrol
-	dh_md5sums
-	dh_builddeb
 
-binary: binary-indep binary-arch
-.PHONY: build clean binary-indep binary-arch binary install
+override_dh_gencontrol:
+	# We need to add php:Depends to the substvars file
+	for i in $(shell dh_listpackages); do echo "php:Depends=phpapi-`php-config --phpapi`" >> debian/$$i.substvars; done
+	dh_gencontrol
