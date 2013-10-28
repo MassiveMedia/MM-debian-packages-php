@@ -2,7 +2,7 @@ Source: php-sphinx
 Section: web
 Priority: optional
 Maintainer: Bart Verwilst <bart@verwilst.be>
-Build-Depends: debhelper (>= 7), po-debconf, xsltproc , php54-dev, libsphinxclient-dev  
+Build-Depends: debhelper (>= 7), po-debconf, xsltproc , php5-dev, libsphinxclient-dev  
 Standards-Version: 3.8.1
 
 Package: php54-sphinx
