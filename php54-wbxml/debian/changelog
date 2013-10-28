@@ -1,9 +1,3 @@
-php-wbxml (1.0.3-0mm6) lucid; urgency=low
-
-  * bump the version number
-
- -- Massive Media <admin@massivemedia.eu>  Wed, 02 Oct 2013 18:15:38 +0000
-
 php-wbxml (1.0.3-0mm5) lucid; urgency=low
 
   * Remove debian/php5-wbxml.dirs; we don't need usr/lib/php5 for our

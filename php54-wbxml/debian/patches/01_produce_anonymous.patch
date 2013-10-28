@@ -1,13 +1,7 @@
-#! /bin/sh /usr/share/dpatch/dpatch-run
-## produce_anonymous.dpatch by  <poison@buildbox03.netnoc>
-##
-## All lines beginning with `## DP:' are a description of the patch.
-## DP: No description.
-
-@DPATCH@
-diff -urNad php-wbxml~/wbxml.c php-wbxml/wbxml.c
---- php-wbxml~/wbxml.c	2013-05-29 15:30:15.000000000 +0000
-+++ php-wbxml/wbxml.c	2013-05-29 15:32:11.367873463 +0000
+Author: <poison@buildbox03.netnoc>
+Description: No description.
+--- a/wbxml.c
++++ b/wbxml.c
 @@ -148,6 +148,7 @@
      /* Microsoft AirSync */
  #if defined( WBXML_SUPPORT_AIRSYNC )
