@@ -12,7 +12,7 @@ Conflicts: php5-imagick
 Replaces: php5-imagick
 Provides: php5-imagick
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, ${php54:Depends}, ucf
+Depends: ${shlibs:Depends}, ${misc:Depends}, ${php:Depends}, ucf
 Description: ImageMagick module for php5
  This package provides a wrapper for ImageMagick library
  directly from PHP scripts.

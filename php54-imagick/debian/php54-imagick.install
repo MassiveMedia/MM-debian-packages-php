@@ -1,0 +1,3 @@
+# This package uses ucf, so retain that in order to avoid issues on upgrade
+debian/imagick.ini-dist usr/share/php54-imagick/
+usr

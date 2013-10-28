@@ -1,45 +1,40 @@
 #!/usr/bin/make -f
+# -*- makefile -*-
 
-DEB_TAR_SRCDIR := $(shell basename $(wildcard *.tgz) .tgz)
+# Uncomment this to turn on verbose mode.
+#export DH_VERBOSE=1
 
-include /usr/share/cdbs/1/rules/tarball.mk
-include /usr/share/cdbs/1/rules/debhelper.mk
+# Set some variables
+CFLAGS = -O2 -Wall
+CFLAGS += -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64
 
-PHP_EX5=$(shell /usr/bin/php-config5 --extension-dir)
+PHPIZE=/usr/bin/phpize
+PHPCONFIG=/usr/bin/php-config
+EXT_DIR=$(shell $(PHPCONFIG) --extension-dir)
 
-DEB_INSTALL_EXAMPLES_php54-imagick = $(DEB_SRCDIR)/examples/*
-DEB_INSTALL_DOCS_php54-imagick = $(DEB_SRCDIR)/CREDITS
+ifneq (,$(findstring debug,$(DEB_BUILD_OPTIONS)))
+	CFLAGS += -g
+	DEBUG := --enable-debug
+else
+	DEBUG := --disable-debug
+endif
 
-#
-# local hacks
-#
+# This will do the "hard work"
+%:
+	dh $@
 
-patch: apply-patches
+# ... except it will do some things slightly incorrectly for this
+# particular package, so add some overrides:
+override_dh_auto_configure:
+	# We need to run phpize before configure can be called
+	$(PHPIZE)
+	./configure --with-imagick --with-php-config=/usr/bin/php-config --with-regex=system --disable-rpath --disable-static --with-imagick=shared,/usr
 
-clean::
-	rm -f php[5]-imagick.postrm php[5]-imagick.postinst
+override_dh_auto_install:
+	# dh_auto_install uses DESTDIR rather than INSTALL_ROOT, so fix
+	$(MAKE) INSTALL_ROOT=$(CURDIR)/debian/tmp install
 
-configure_for_php%:
-	cd $(DEB_SRCDIR) && phpize --clean && phpize && \
-	    ./configure --with-imagick --with-php-config=/usr/bin/php-config$* --with-regex=system \
-	    --disable-rpath --disable-static --with-imagick=shared,/usr
-	sed -e 's/phpX/php$*/g' < debian/phpX-imagick.postinst > debian/php54-imagick.postinst
-	sed -e 's/phpX/php$*/g' < debian/phpX-imagick.postrm   > debian/php54-imagick.postrm
-
-#
-# cdbs things
-#
-
-define install_rule
-	$(MAKE) -C $(DEB_SRCDIR)
-	mkdir -p debian/php54-imagick$(PHP_EX$1)
-	install -m 644 -o root -g root $(DEB_SRCDIR)/modules/imagick.so debian/php54-imagick$(PHP_EX$1)/imagick.so
-	mkdir -p debian/php54-imagick/usr/share/lintian/overrides
-	echo "php54-imagick: no-shlibs-control-file $(PHP_EX$1)/imagick.so" > debian/php54-imagick/usr/share/lintian/overrides/php$1-imagick
-	echo "php$1:Depends=phpapi-`php-config$1 --phpapi`, php$1-common" >> debian/php54-imagick.substvars
-	mkdir -p debian/php54-imagick/usr/share/php$1-imagick/
-	cp debian/imagick.ini  debian/php54-imagick/usr/share/php$1-imagick/imagick.ini-dist
-endef
-
-install/php54-imagick:: configure_for_php5
-	$(call install_rule,5)
+override_dh_gencontrol:
+	# We need to add php:Depends to the substvars file
+	for i in $(shell dh_listpackages); do echo "php:Depends=phpapi-`php-config --phpapi`" >> debian/$$i.substvars; done
+	dh_gencontrol
