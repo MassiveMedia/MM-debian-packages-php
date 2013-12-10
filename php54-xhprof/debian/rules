@@ -27,20 +27,20 @@ endif
 # particular package, so add some overrides:
 override_dh_auto_configure:
 	# We need to run phpize before configure can be called
-	cd $(CURDIR) && $(PHPIZE)
-	cd $(CURDIR) && ./configure --with-gearman --prefix=/usr
+	cd $(CURDIR)/extension/ && $(PHPIZE)
+	cd $(CURDIR)/extension/ && ./configure --with-gearman --prefix=/usr
 
 override_dh_auto_build:
-	cd $(CURDIR) && $(MAKE) DESTDIR=debian/tmp
+	cd $(CURDIR)/extension/ && $(MAKE) DESTDIR=debian/tmp
 
-override_dh_auto_clean:
-	cd $(CURDIR) && phpize --clean
-	rm -f $(CURDIR)/jquery.autocomplete.css
-	dh_clean
+#override_dh_auto_clean:
+#	cd $(CURDIR)/extension/ && phpize --clean
+#	rm -f $(CURDIR)/jquery.autocomplete.css
+#	dh_clean
 
 override_dh_auto_install:
 	# dh_auto_install uses DESTDIR rather than INSTALL_ROOT, so fix
-	cd $(CURDIR) && $(MAKE) INSTALL_ROOT=$(CURDIR)/debian/tmp install
+	cd $(CURDIR)/extension/ && $(MAKE) INSTALL_ROOT=$(CURDIR)/debian/tmp install
 
 override_dh_gencontrol:
 	# We need to add php:Depends to the substvars file
