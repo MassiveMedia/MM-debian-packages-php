@@ -1,3 +1,9 @@
+php54 (5.4.20-0mm5) lucid; urgency=low
+
+  * bump version
+
+ -- Massive Media <admin@massivemedia.eu>  Wed, 11 Dec 2013 10:46:40 +0000
+
 php54 (5.4.20-0mm1) lucid; urgency=low
 
   * New upstream release
